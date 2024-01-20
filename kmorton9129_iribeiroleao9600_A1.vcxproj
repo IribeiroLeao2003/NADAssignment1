@@ -130,7 +130,10 @@
     <ClInclude Include="Net.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="packetReader.cpp" />
+    <ClCompile Include="packetWriter.cpp" />
     <ClCompile Include="ReliableUDP.cpp" />
+    <ClCompile Include="testing.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
