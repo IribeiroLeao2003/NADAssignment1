@@ -128,7 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Net.h" />
-    <ClInclude Include="Packet.h" />
+    <ClInclude Include="Packets.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="packetReader.cpp" />
