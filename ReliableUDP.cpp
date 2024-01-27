@@ -219,7 +219,7 @@ int main(int argc, char* argv[])
 		}
 
 
-
+		//Receive packets here. Also tracked will the same bool but determined when a packet is received
 		while (true)
 		{
 			unsigned char packet[256];
