@@ -208,7 +208,8 @@ int main(int argc, char* argv[])
 
 		sendAccumulator += DeltaTime;
 
-		
+		//First packet sent will be the file info packet. We will track when our first packet was sent with a bool
+		//All subsequent packets will contain the file data.
 		while (sendAccumulator > 1.0f / sendRate)
 		{		
 			unsigned char packet[PacketSize];
@@ -216,6 +217,8 @@ int main(int argc, char* argv[])
 			connection.SendPacket(packet, sizeof(packet));
 			sendAccumulator -= 1.0f / sendRate;
 		}
+
+
 
 		while (true)
 		{

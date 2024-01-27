@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Net.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="Packets.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Packet.h">
+    <ClInclude Include="Net.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
