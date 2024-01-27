@@ -210,23 +210,9 @@ int main(int argc, char* argv[])
 
 		
 		while (sendAccumulator > 1.0f / sendRate)
-		{
-			
-			packetCounter++;
-			char packetCounterChar[convertSize] = {0}; //make char of the counter
-
-			#pragma warning(suppress : 4996)
-			sprintf(packetCounterChar, "%d\n", packetCounter);
-
+		{		
 			unsigned char packet[PacketSize];
 			memset(packet, 0, sizeof(packet));
-
-			char message[messageSize] = "Hello World "; //make message
-
-			#pragma warning(suppress : 4996)
-			strcpy((char*)packet, strcat(message,packetCounterChar)); //copy the message and counter to packet
-
-
 			connection.SendPacket(packet, sizeof(packet));
 			sendAccumulator -= 1.0f / sendRate;
 		}
@@ -237,12 +223,6 @@ int main(int argc, char* argv[])
 			int bytes_read = connection.ReceivePacket(packet, sizeof(packet));
 			if (bytes_read == 0)
 				break;
-			
-			char messageCopy[255] = { 0 };
-			#pragma warning(suppress : 4996)
-			strcpy(messageCopy, (char*)packet);
-
-			printf("%s", messageCopy);
 		}
 
 		// show packets that were acked this frame
