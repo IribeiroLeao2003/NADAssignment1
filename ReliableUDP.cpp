@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
 	Mode mode = Server;
 	Address address;
 
-	
+	//Run as client if argc >= 2
 	if (argc >= 2)
 	{
 		int a, b, c, d;
@@ -142,6 +142,9 @@ int main(int argc, char* argv[])
 			mode = Client;
 			address = Address(a, b, c, d, ServerPort);
 		}
+		//Check for additional command line argument of file name. this will be argv[2].
+		// Set a bool flag to say we are sending a file
+		//If no additonal arguments of a file just run like default.
 	}
 
 	// initialize
@@ -211,7 +214,12 @@ int main(int argc, char* argv[])
 		//First packet sent will be the file info packet. We will track when our first packet was sent with a bool
 		//All subsequent packets will contain the file data.
 		while (sendAccumulator > 1.0f / sendRate)
-		{		
+		{	
+			//check if we are sending a file
+			//check if this is our first time sending a packet.
+			//If it is, then send our fileinfo
+			//If it is not send our chunk of file data.
+			//If our end of file is met, then we can flip the flag that we are sending a file to false.
 			unsigned char packet[PacketSize];
 			memset(packet, 0, sizeof(packet));
 			connection.SendPacket(packet, sizeof(packet));
@@ -222,6 +230,10 @@ int main(int argc, char* argv[])
 		//Receive packets here. Also tracked will the same bool but determined when a packet is received
 		while (true)
 		{
+			//check if the received packet is file info. If it is, switch to file reading mode
+			//When in file reading mode, check if packet contains file data or packet to say we are done.
+			// If the packet contains data send the data to be read and written to the disk
+			//When done reading file verify checksum and then swtich back to default mode.
 			unsigned char packet[256];
 			int bytes_read = connection.ReceivePacket(packet, sizeof(packet));
 			if (bytes_read == 0)
