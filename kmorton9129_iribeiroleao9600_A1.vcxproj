@@ -131,6 +131,7 @@
     <ClInclude Include="Packets.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="checksum.cpp" />
     <ClCompile Include="packetReader.cpp" />
     <ClCompile Include="packetWriter.cpp" />
     <ClCompile Include="ReliableUDP.cpp" />
