@@ -233,7 +233,7 @@ int main(int argc, char* argv[])
 					if (fileInfoSend) //we haven't sent the first chunk of data yet
 					{
 						//send our file info
-						int fileSize = fileSizeReader(&inputFile);
+						int32_t fileSize = fileSizeReader(&inputFile);
 						FileInfoPacket info(fileName, fileSize);
 						//done our first send
 						checksumSend = true;

@@ -14,17 +14,17 @@
 #include <fstream>
 using namespace std;
 
-const int kPayloadSize = 256; //arbitrary we can change it later
-const int kIntSize = 4; //4 bytes
-const int kError = -1;
-const int kEndOfFile = 1;
-const int kNotEndOfFile = -1;
-const int kTrue = 1;
-const int kFalse = 0;
+const int32_t kPayloadSize = 252; //256 - 4 for ints we include
+const int32_t kIntSize = 4; //4 bytes
+const int32_t kError = -1;
+const int32_t kEndOfFile = 1;
+const int32_t kNotEndOfFile = -1;
+const int32_t kTrue = 1;
+const int32_t kFalse = 0;
 
-int fileSizeReader(ifstream* file);
+int32_t fileSizeReader(ifstream* file);
 string generateChecksum(string fileName);
-int fileReader(ifstream* file, unsigned char buffer[]);
+int32_t fileReader(ifstream* file, unsigned char buffer[]);
 
 /*
 * Name: FilePacket
@@ -33,7 +33,7 @@ int fileReader(ifstream* file, unsigned char buffer[]);
 class FilePacket {
 
 public:
-	int endFile = kFalse;
+	int32_t endFile = kFalse;
 	char payload[kPayloadSize];
 };
 
@@ -45,7 +45,7 @@ public:
 class ChecksumPacket {
 
 public:
-	int endChecksum = kFalse;
+	int32_t endChecksum = kFalse;
 	char checksum[kPayloadSize];
 };
 
@@ -57,8 +57,8 @@ public:
 class FileInfoPacket {
 
 public:
+	int32_t fileSize;
 	string fileName;
-	int fileSize;
 
 	FileInfoPacket(string nameInput, int sizeInput)
 	{

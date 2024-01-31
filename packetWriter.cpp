@@ -14,10 +14,10 @@
 * PARAMETERS  : ifstream* file - a pointer to the file to check the size of
 * RETURNS     : int fileSize
 */
-int fileSizeReader(ifstream* file)
+int32_t fileSizeReader(ifstream* file)
 {
 	bool error = false;
-	int fileSize = 0; //filesize in bytes
+	int32_t fileSize = 0; //filesize in bytes
 
 	file->seekg(0, file->end);  //move to end of file to get size
 	fileSize = file->tellg(); //get file size
@@ -35,7 +35,7 @@ int fileSizeReader(ifstream* file)
 * PARAMETERS  : ifstream* file - a pointer to the file to read
 * RETURNS     : int with the status of end of file
 */
-int fileReader(ifstream* file, unsigned char buffer[])
+int32_t fileReader(ifstream* file, unsigned char buffer[])
 {
 	if (!file->eof()) //while not at end of file
 	{
