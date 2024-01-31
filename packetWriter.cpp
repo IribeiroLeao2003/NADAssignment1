@@ -33,9 +33,9 @@ int fileSizeReader(ifstream* file)
 * FUNCTION    : fileSizeReader()
 * DESCRIPTION : This function takes a file and reads one chunk of it
 * PARAMETERS  : ifstream* file - a pointer to the file to read
-* RETURNS     : bool with the status of end of file
+* RETURNS     : int with the status of end of file
 */
-bool fileReader(ifstream* file, unsigned char buffer[])
+int fileReader(ifstream* file, unsigned char buffer[])
 {
 	if (!file->eof()) //while not at end of file
 	{

@@ -15,13 +15,14 @@
 using namespace std;
 
 const int kPayloadSize = 256; //arbitrary we can change it later
+const int kIntSize = 4; //4 bytes
 const int kError = -1;
-const bool kEndOfFile = true;
-const bool kNotEndOfFile = false;
+const int kEndOfFile = 1;
+const int kNotEndOfFile = -1;
 
 int fileSizeReader(ifstream* file);
 string generateChecksum(string fileName);
-bool fileReader(ifstream* file, unsigned char buffer[]);
+int fileReader(ifstream* file, unsigned char buffer[]);
 
 /*
 * Name: FilePacket
