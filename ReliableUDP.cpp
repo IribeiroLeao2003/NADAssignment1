@@ -234,18 +234,10 @@ int main(int argc, char* argv[])
 					{
 						//send our file info
 						int fileSize = fileSizeReader(&inputFile);
-						if (fileSize != kError)
-						{
-							FileInfoPacket info(fileName, fileSize);
-							//done our first send
-							checksumSend = true;
-							fileInfoSend = false;
-						}
-						else
-						{
-							printf("File could not be read.\n");
-							sendFile = false;
-						}
+						FileInfoPacket info(fileName, fileSize);
+						//done our first send
+						checksumSend = true;
+						fileInfoSend = false;
 					}
 					else if (checksumSend)//first send has been done. Now we do file data
 					{
@@ -263,6 +255,11 @@ int main(int argc, char* argv[])
 						}
 					}
 
+				}
+				else
+				{
+					printf("File could not be read.\n");
+					sendFile = false;
 				}
 
 			}
