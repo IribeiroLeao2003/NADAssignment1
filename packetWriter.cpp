@@ -47,3 +47,37 @@ int32_t fileReader(ifstream* file, unsigned char buffer[])
 		return kEndOfFile;
 	}
 }
+
+
+/*
+* FUNCTION    : serializeData()
+* DESCRIPTION : This function takes an int32_t, char array, and unsigned char array 
+			  : and serializes the int and char array and saves it to the unsigned char array
+* PARAMETERS  : int32_t intData - the int data to save
+*			  : char charData[] - the char data to save
+*			  : unsigned char serializedData[] - the array to save the serialized data to
+* RETURNS     : int32_t kSuccess on success and kFailure on failure
+*/
+int32_t serializeData(int32_t intData, char charData[], unsigned char serializedData[])
+{
+	if (sizeof(intData) + sizeof(charData) < sizeof(serializedData)) //make sure our data isn't too big to fit
+	{
+		//mark our location
+		unsigned char* pDataPoint = serializedData;
+
+		//copy int
+		memcpy(pDataPoint, &intData, sizeof(intData));
+		//move pointer ahead
+		pDataPoint += sizeof(intData);
+
+		//copy charData
+		memcpy(pDataPoint, &charData, sizeof(charData));
+		return kSuccess;
+	}
+	else
+	{
+		return kFailure;
+	}
+
+
+}

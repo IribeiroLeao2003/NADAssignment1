@@ -21,10 +21,13 @@ const int32_t kEndOfFile = 1;
 const int32_t kNotEndOfFile = -1;
 const int32_t kTrue = 1;
 const int32_t kFalse = 0;
+const int32_t kSuccess = 1;
+const int32_t kFailure = -1;
 
 int32_t fileSizeReader(ifstream* file);
 string generateChecksum(string fileName);
 int32_t fileReader(ifstream* file, unsigned char buffer[]);
+int32_t serializeData(int32_t intData, char charData[], unsigned char serializedData[]);
 
 /*
 * Name: FilePacket
