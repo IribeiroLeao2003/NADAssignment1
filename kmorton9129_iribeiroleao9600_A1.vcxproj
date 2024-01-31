@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\..\Downloads\CRC.h" />
     <ClInclude Include="Net.h" />
     <ClInclude Include="Packets.h" />
   </ItemGroup>
