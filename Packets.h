@@ -19,6 +19,8 @@ const int kIntSize = 4; //4 bytes
 const int kError = -1;
 const int kEndOfFile = 1;
 const int kNotEndOfFile = -1;
+const int kTrue = 1;
+const int kFalse = 0;
 
 int fileSizeReader(ifstream* file);
 string generateChecksum(string fileName);
@@ -31,7 +33,7 @@ int fileReader(ifstream* file, unsigned char buffer[]);
 class FilePacket {
 
 public:
-	bool endFile = false;
+	int endFile = kFalse;
 	char payload[kPayloadSize];
 };
 
@@ -43,7 +45,7 @@ public:
 class ChecksumPacket {
 
 public:
-	bool endChecksum = false;
+	int endChecksum = kFalse;
 	char checksum[kPayloadSize];
 };
 
