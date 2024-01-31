@@ -249,9 +249,10 @@ int main(int argc, char* argv[])
 					}
 					else //otherwise send file data
 					{
-						if (fileReader(&inputFile, filePacketData)) //check if end of file
+						if (fileReader(&inputFile, filePacketData) == kEndOfFile) //check if end of file
 						{
 							sendFile = false;
+							inputFile.close();//close file
 						}
 					}
 
