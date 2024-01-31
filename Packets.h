@@ -10,12 +10,18 @@
 #ifndef PACKET_H
 #define PACKET 
 #include <string>
-#include <windows.data.json.h>
 #include <iostream>
 #include <fstream>
 using namespace std;
 
-const int payloadSize = 255; //arbitrary we can change it later
+const int kPayloadSize = 256; //arbitrary we can change it later
+const int kError = -1;
+const bool kEndOfFile = true;
+const bool kNotEndOfFile = false;
+
+int fileSizeReader(ifstream* file);
+string generateChecksum(string fileName);
+bool fileReader(ifstream* file, unsigned char buffer[]);
 
 /*
 * Name: FilePacket
@@ -24,7 +30,20 @@ const int payloadSize = 255; //arbitrary we can change it later
 class FilePacket {
 
 public:
-	char Payload[payloadSize];
+	bool endFile = false;
+	char payload[kPayloadSize];
+};
+
+
+/*
+* Name: FilePacket
+* This packet contains the payload of the checksum data we are sending.
+*/
+class ChecksumPacket {
+
+public:
+	bool endChecksum = false;
+	char checksum[kPayloadSize];
 };
 
 
@@ -33,9 +52,16 @@ public:
 * This packet contains the file name, file size, and checksum of the file we are sending. It will be send first.
 */
 class FileInfoPacket {
-	string FileName;
-	string FileSize;
-	string CheckSum;
+
+public:
+	string fileName;
+	int fileSize;
+
+	FileInfoPacket(string nameInput, int sizeInput)
+	{
+		fileName = nameInput;
+		fileSize = sizeInput;
+	}
 };
 
 

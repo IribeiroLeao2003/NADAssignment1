@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "Net.h"
+#include "Packets.h"
 
 //#define SHOW_ACKS
 
@@ -121,6 +122,10 @@ private:
 int main(int argc, char* argv[])
 {
 	// parse command line
+	bool sendFile = false;
+	bool checksumSend = false;
+	bool fileInfoSend = true;
+	string fileName = "";
 
 	enum Mode
 	{
@@ -142,9 +147,13 @@ int main(int argc, char* argv[])
 			mode = Client;
 			address = Address(a, b, c, d, ServerPort);
 		}
-		//Check for additional command line argument of file name. this will be argv[2].
-		// Set a bool flag to say we are sending a file
-		//If no additonal arguments of a file just run like default.
+
+		//check for file name in argv[2]
+		if (argc == 3)
+		{
+			sendFile = true; //we're sending a file
+			fileName = argv[2]; //copy name to string
+		}
 	}
 
 	// initialize
@@ -215,6 +224,48 @@ int main(int argc, char* argv[])
 		//All subsequent packets will contain the file data.
 		while (sendAccumulator > 1.0f / sendRate)
 		{	
+			if (sendFile) //we have a file to send
+			{
+				unsigned char filePacketData[PacketSize] = { '\0' };
+				ifstream inputFile(fileName, ifstream::binary); //open file
+				if (inputFile.is_open() == true)
+				{
+					if (fileInfoSend) //we haven't sent the first chunk of data yet
+					{
+						//send our file info
+						int fileSize = fileSizeReader(&inputFile);
+						if (fileSize != kError)
+						{
+							FileInfoPacket info(fileName, fileSize);
+							//done our first send
+							checksumSend = true;
+							fileInfoSend = false;
+						}
+						else
+						{
+							printf("File could not be read.\n");
+							sendFile = false;
+						}
+					}
+					else if (checksumSend)//first send has been done. Now we do file data
+					{
+						//send file data
+						string fileChecksum = generateChecksum(fileName);//generate checksum
+
+						//checksum will need to be sent in chunks for big checksums
+						checksumSend = false; //done sending checksum
+					}
+					else //otherwise send file data
+					{
+						if (fileReader(&inputFile, filePacketData)) //check if end of file
+						{
+							sendFile = false;
+						}
+					}
+
+				}
+
+			}
 			//check if we are sending a file
 			//check if this is our first time sending a packet.
 			//If it is, then send our fileinfo
