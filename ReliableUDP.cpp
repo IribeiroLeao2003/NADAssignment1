@@ -233,19 +233,11 @@ int main(int argc, char* argv[])
 					if (fileInfoSend) //we haven't sent the first chunk of data yet
 					{
 						//send our file info
-						int fileSize = fileSizeReader(&inputFile);
-						if (fileSize != kError)
-						{
-							FileInfoPacket info(fileName, fileSize);
-							//done our first send
-							checksumSend = true;
-							fileInfoSend = false;
-						}
-						else
-						{
-							printf("File could not be read.\n");
-							sendFile = false;
-						}
+						int32_t fileSize = fileSizeReader(&inputFile);
+						FileInfoPacket info(fileName, fileSize);
+						//done our first send
+						checksumSend = true;
+						fileInfoSend = false;
 					}
 					else if (checksumSend)//first send has been done. Now we do file data
 					{
@@ -257,12 +249,18 @@ int main(int argc, char* argv[])
 					}
 					else //otherwise send file data
 					{
-						if (fileReader(&inputFile, filePacketData)) //check if end of file
+						if (fileReader(&inputFile, filePacketData) == kEndOfFile) //check if end of file
 						{
 							sendFile = false;
+							inputFile.close();//close file
 						}
 					}
 
+				}
+				else
+				{
+					printf("File could not be read.\n");
+					sendFile = false;
 				}
 
 			}
