@@ -5,8 +5,11 @@
 
 
 
-string generateChecksum(string fileName)
+string generateChecksum(const string& fileName)
 {
+	char buffer[kBufferSize]; //buffer variable
+
+	
 
 	//Open file binary 
 	//if File isnt open 

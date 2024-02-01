@@ -23,6 +23,7 @@ const int32_t kTrue = 1;
 const int32_t kFalse = 0;
 const int32_t kSuccess = 1;
 const int32_t kFailure = -1;
+const int32_t kBufferSize = 1024; //setting it up as a test, we can change the number as much as nessesary 
 
 int32_t fileSizeReader(ifstream* file);
 string generateChecksum(string fileName);
