@@ -224,9 +224,10 @@ int main(int argc, char* argv[])
 		//All subsequent packets will contain the file data.
 		while (sendAccumulator > 1.0f / sendRate)
 		{	
+			unsigned char packet[PacketSize];		
+
 			if (sendFile) //we have a file to send
 			{
-				unsigned char filePacketData[PacketSize] = { '\0' };
 				ifstream inputFile(fileName, ifstream::binary); //open file
 				if (inputFile.is_open() == true)
 				{
@@ -234,7 +235,11 @@ int main(int argc, char* argv[])
 					{
 						//send our file info
 						int32_t fileSize = fileSizeReader(&inputFile);
-						FileInfoPacket info(fileName, fileSize);
+						char fileNameChar[kPayloadSize] = { "\0" };
+						strcpy(fileNameChar, fileName.c_str());
+
+						serializeData(fileSize, fileNameChar, packet); //serialize the data
+
 						//done our first send
 						checksumSend = true;
 						fileInfoSend = false;
@@ -249,7 +254,7 @@ int main(int argc, char* argv[])
 					}
 					else //otherwise send file data
 					{
-						if (fileReader(&inputFile, filePacketData) == kEndOfFile) //check if end of file
+						if (fileReader(&inputFile, packet) == kEndOfFile) //check if end of file
 						{
 							sendFile = false;
 							inputFile.close();//close file
@@ -269,7 +274,6 @@ int main(int argc, char* argv[])
 			//If it is, then send our fileinfo
 			//If it is not send our chunk of file data.
 			//If our end of file is met, then we can flip the flag that we are sending a file to false.
-			unsigned char packet[PacketSize];
 			memset(packet, 0, sizeof(packet));
 			connection.SendPacket(packet, sizeof(packet));
 			sendAccumulator -= 1.0f / sendRate;
