@@ -31,6 +31,7 @@ int32_t fileReader(ifstream* file, char buffer[]);
 int32_t serializeData(int32_t intData, char charData[], unsigned char serializedData[]);
 string fileNameExtractor(string filePath);
 int32_t deserializeData(unsigned char serData[], int32_t* dataInt, char dataCh[]);
+int32_t fileWriter(ofstream* file, char buffer[]);
 
 /*
 * Name: FilePacket

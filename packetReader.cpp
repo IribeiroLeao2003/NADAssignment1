@@ -45,15 +45,16 @@ int32_t deserializeData(unsigned char serData[], int32_t* intData, char chrData[
 * PARAMETERS  : ifstream* file - a pointer to the file to read
 * RETURNS     : int with the status of end of file
 */
-int32_t fileWriter(ifstream* file, char buffer[])
+int32_t fileWriter(ofstream* file, char buffer[])
 {
-	if (!file->eof()) //while not at end of file
+	if (file->is_open() == true)
 	{
-		file->read(buffer, kPayloadSize); //read the buffer
-		return kNotEndOfFile;
-	}
-	else
-	{
-		return kEndOfFile;
+		unsigned char buffer[256] = { '0' }; //our buffer of data
+		//memset(buffer, 0, 256); //this allows us to copy non text files!
+
+		file->write((char*)buffer, 256); //write the buffer to file
+
+
+		cout << "file written\n";
 	}
 }
