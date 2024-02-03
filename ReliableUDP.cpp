@@ -276,7 +276,7 @@ int main(int argc, char* argv[])
 						}
 						else //end of file close it
 						{
-							char emptyBuffer[1] = { '\0' }; //no data to send so just send an empty array
+							char emptyBuffer[kPayloadSize] = { '\0' }; //no data to send so just send an empty array
 							serializeData(fileStatus, fileBuffer, packet); //serialize the data and send it
 							sendFile = false;
 							inputFile.close();//close file
@@ -291,11 +291,6 @@ int main(int argc, char* argv[])
 				}
 
 			}
-			//check if we are sending a file
-			//check if this is our first time sending a packet.
-			//If it is, then send our fileinfo
-			//If it is not send our chunk of file data.
-			//If our end of file is met, then we can flip the flag that we are sending a file to false.
 			memset(packet, 0, sizeof(packet));
 			connection.SendPacket(packet, sizeof(packet));
 			sendAccumulator -= 1.0f / sendRate;
@@ -309,10 +304,22 @@ int main(int argc, char* argv[])
 			//When in file reading mode, check if packet contains file data or packet to say we are done.
 			// If the packet contains data send the data to be read and written to the disk
 			//When done reading file verify checksum and then swtich back to default mode.
-			unsigned char packet[256];
+			unsigned char packet[PacketSize];
 			int bytes_read = connection.ReceivePacket(packet, sizeof(packet));
-			if (bytes_read == 0)
+			if (bytes_read == 0) //empty packet
+			{
 				break;
+			}
+			else //data in packet
+			{
+				int32_t intData = 0;
+				char charData[kPayloadSize] = { '\0' };
+				//first check for file name
+				deserializeData(packet, &intData, charData);
+
+
+			}
+				
 		}
 
 		// show packets that were acked this frame

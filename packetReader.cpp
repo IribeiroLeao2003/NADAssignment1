@@ -18,24 +18,21 @@
 *             : size_t dataChSize - the size of the dataCh array
 * RETURNS     : the number of bytes read from the serialized data or kFailure in case of 
 */
-int32_t deserializeData(const unsigned char serData[], int32_t& dataInt, char dataCh[], size_t dataChSize) {
-    if (serData == nullptr || dataCh == nullptr) {
-        return kFailure;
-    }
+int32_t deserializeData(unsigned char serData[], int32_t* intData, char chrData[]) {
+	if (serData == nullptr || chrData == nullptr) {
+		return kError;
+	}
 
-    // Start at the beginning of the serialized data
-    const unsigned char* pDataPoint = serData;
+	// Start at the beginning of the serialized data
+	unsigned char* pDataPoint = serData;
 
-    // Deserialize the int32_t
-    memcpy(&dataInt, pDataPoint, sizeof(int32_t));
-    pDataPoint += sizeof(int32_t); // Move the pointer past the int data
+	// Deserialize the int32_t
+	memcpy(intData, pDataPoint, sizeof(int32_t)); //copy the int data from the serData to dataInt
+	pDataPoint += sizeof(*intData); // Move the pointer past the int data
 
-    // Calculate the size of charData we expect to deserialize
-    size_t expectedCharDataSize = dataChSize;
+	// Deserialize the char data
+	memcpy(chrData, pDataPoint, kPayloadSize);
 
-    // Deserialize the char data
-    memcpy(dataCh, pDataPoint, expectedCharDataSize);
-
-    // Return the total number of bytes deserialized
-    return sizeof(int32_t) + expectedCharDataSize;
+	// Return the total number of bytes deserialized
+	return sizeof(int32_t) + kPayloadSize;
 }
