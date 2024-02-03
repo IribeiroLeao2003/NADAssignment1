@@ -133,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="checksum.cpp" />
+    <ClCompile Include="FileNameProccessor.cpp" />
     <ClCompile Include="packetReader.cpp" />
     <ClCompile Include="packetWriter.cpp" />
     <ClCompile Include="ReliableUDP.cpp" />

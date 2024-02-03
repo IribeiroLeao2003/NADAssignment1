@@ -125,6 +125,7 @@ int main(int argc, char* argv[])
 	bool sendFile = false;
 	bool checksumSend = false;
 	bool fileInfoSend = true;
+	string filePath = "";
 	string fileName = "";
 
 	enum Mode
@@ -151,8 +152,17 @@ int main(int argc, char* argv[])
 		//check for file name in argv[2]
 		if (argc == 3)
 		{
-			sendFile = true; //we're sending a file
-			fileName = argv[2]; //copy name to string
+			filePath = argv[2]; //copy name to string
+			fileName = fileNameExtractor(fileName); //ensure we just have the file name
+			if (fileName.length() <= kPayloadSize)
+			{
+				sendFile = true; //we're sending a file
+			}
+			else
+			{
+				printf("File name is too long.\n");
+			}
+
 		}
 	}
 
@@ -228,7 +238,7 @@ int main(int argc, char* argv[])
 
 			if (sendFile) //we have a file to send
 			{
-				ifstream inputFile(fileName, ifstream::binary); //open file
+				ifstream inputFile(filePath, ifstream::binary); //open file
 				if (inputFile.is_open() == true)
 				{
 					if (fileInfoSend) //we haven't sent the first chunk of data yet
@@ -236,6 +246,7 @@ int main(int argc, char* argv[])
 						//send our file info
 						int32_t fileSize = fileSizeReader(&inputFile);
 						char fileNameChar[kPayloadSize] = { "\0" };
+						#pragma warning(disable:4996);
 						strcpy(fileNameChar, fileName.c_str());
 
 						serializeData(fileSize, fileNameChar, packet); //serialize the data
