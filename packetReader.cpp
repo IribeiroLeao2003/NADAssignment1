@@ -36,3 +36,24 @@ int32_t deserializeData(unsigned char serData[], int32_t* intData, char chrData[
 	// Return the total number of bytes deserialized
 	return sizeof(int32_t) + kPayloadSize;
 }
+
+
+
+/*
+* FUNCTION    : fileWriter()
+* DESCRIPTION : This function takes a file and reads one chunk of it
+* PARAMETERS  : ifstream* file - a pointer to the file to read
+* RETURNS     : int with the status of end of file
+*/
+int32_t fileWriter(ifstream* file, char buffer[])
+{
+	if (!file->eof()) //while not at end of file
+	{
+		file->read(buffer, kPayloadSize); //read the buffer
+		return kNotEndOfFile;
+	}
+	else
+	{
+		return kEndOfFile;
+	}
+}

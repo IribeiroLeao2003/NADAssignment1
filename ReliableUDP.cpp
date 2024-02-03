@@ -121,12 +121,19 @@ private:
 
 int main(int argc, char* argv[])
 {
-	// parse command line
+	// client vars
 	bool sendFile = false;
 	bool checksumSend = false;
 	bool fileInfoSend = true;
 	string filePath = "";
+
+	//server vars
+	bool receivedFileInfo = false;
+	bool receivedChecksum = false;
+
+	//client and server vars
 	string fileName = "";
+	int32_t storedFileSize = 0;
 
 	enum Mode
 	{
@@ -316,6 +323,26 @@ int main(int argc, char* argv[])
 				char charData[kPayloadSize] = { '\0' };
 				//first check for file name
 				deserializeData(packet, &intData, charData);
+
+				if (receivedFileInfo == false) //check if we have not started receiving a file
+				{
+					receivedFileInfo = true; //we have now received a file
+
+					fileName = charData; //copy the file name over
+
+					storedFileSize = intData; //store the file size
+
+				}
+				else if (receivedChecksum == false)
+				{
+					//TODO add checksum proccess
+					receivedChecksum = true;
+				}
+				else //otherwise we're reciving file data
+				{
+					//create file with the given name
+					
+				}
 
 
 			}
