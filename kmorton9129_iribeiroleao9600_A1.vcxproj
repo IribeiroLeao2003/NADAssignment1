@@ -129,7 +129,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\..\Downloads\CRC.h" />
     <ClInclude Include="Net.h" />
-    <ClInclude Include="Packets.h" />
+    <ClInclude Include="FileTransfer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="checksum.cpp" />

@@ -6,7 +6,7 @@
  * Purpose: This file contains the logic for sending packets and preparing the data for them.
  */
 
-#include "Packets.h"
+#include "FileTransfer.h"
 
 /*
 * FUNCTION    : fileSizeReader()

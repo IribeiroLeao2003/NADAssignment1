@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "Net.h"
-#include "Packets.h"
+#include "FileTransfer.h"
 
 //#define SHOW_ACKS
 

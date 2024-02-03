@@ -1,7 +1,13 @@
+/*
+ * File: packetReader.cpp
+ * Project: SENG 2040 A1
+ * Programmer: Vivian Morton & Isaac
+ * First Version: 23/01/2024 (dd/mm/yyyy)
+ * Purpose: This file is responsible for the logic of reading the packet data
+ */
 
 
-
-#include "Packets.h"
+#include "FileTransfer.h"
 /*
 * FUNCTION    : deserializeData()
 * DESCRIPTION : This function takes a serialized data array of char and

@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Packets.h">
+    <ClInclude Include="FileTransfer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Net.h">
