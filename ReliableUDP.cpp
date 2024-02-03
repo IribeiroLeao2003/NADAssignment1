@@ -304,8 +304,6 @@ int main(int argc, char* argv[])
 		}
 
 
-		ofstream outputFile; //define here so it remains open at the start of the while loop
-
 		//Receive packets here. Also tracked will the same bool but determined when a packet is received
 		while (true)
 		{
@@ -324,7 +322,7 @@ int main(int argc, char* argv[])
 				int32_t intData = 0;
 				char charData[kPayloadSize] = { '\0' };
 				//first check for file name
-				deserializeData(packet, &intData, charData);
+				deserializeData(packet, &intData, charData); 
 
 				if (receivedFileInfo == false) //check if we have not started receiving a file
 				{
@@ -334,8 +332,6 @@ int main(int argc, char* argv[])
 
 					storedFileSize = intData; //store the file size
 
-					outputFile.open(fileName, ofstream::binary); //open/create the file
-
 				}
 				else if (receivedChecksum == false)
 				{
@@ -344,20 +340,7 @@ int main(int argc, char* argv[])
 				}
 				else //otherwise we're reciving file data
 				{
-					if (intData != kEndOfFile) //not at end of file
-					{
-						fileWriter(&outputFile, charData); //write the data
-					}
-					else //at end of file
-					{
-						outputFile.close(); //close file
-
-						//generate checksum of our output file
-						//compare checksums
-
-						receivedFileInfo = false;
-						receivedChecksum = false;
-					}
+					//create file with the given name
 					
 				}
 

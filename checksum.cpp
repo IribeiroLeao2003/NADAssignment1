@@ -7,9 +7,16 @@
 
 string generateChecksum(const string& fileName)
 {
-	char buffer[kBufferSize]; //buffer variable
+	unsigned char buffer[kBufferSize]; //buffer variable
 
-	
+	ifstream userFile(fileName, ios::binary);
+	if (!userFile.is_open()) {
+		cerr << "Failed to open file: " << fileName << endl;
+		return "";
+	}
+
+	CRC::Table<uint32_t, 32> crcTable = CRC::CRC_32().MakeTable();
+	uint32_t crc = CRC::CRC_32().initialValue;
 
 	//Open file binary 
 	//if File isnt open 
