@@ -27,7 +27,7 @@ const int32_t kBufferSize = 1024; //setting it up as a test, we can change the n
 
 int32_t fileSizeReader(ifstream* file);
 string generateChecksum(const string& fileName);
-int32_t fileReader(ifstream* file, unsigned char buffer[]);
+int32_t fileReader(ifstream* file, char buffer[]);
 int32_t serializeData(int32_t intData, char charData[], unsigned char serializedData[]);
 string fileNameExtractor(string filePath);
 

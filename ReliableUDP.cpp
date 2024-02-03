@@ -265,8 +265,19 @@ int main(int argc, char* argv[])
 					}
 					else //otherwise send file data
 					{
-						if (fileReader(&inputFile, packet) == kEndOfFile) //check if end of file
+						char fileBuffer[kPayloadSize] = { '\0' }; //the file data buffer
+
+						int32_t fileStatus = fileReader(&inputFile, fileBuffer); //read the data
+
+						if (fileStatus != kEndOfFile) //check if end of file
 						{
+							serializeData(fileStatus, fileBuffer, packet); //serialize the data and send it
+
+						}
+						else //end of file close it
+						{
+							char emptyBuffer[1] = { '\0' }; //no data to send so just send an empty array
+							serializeData(fileStatus, fileBuffer, packet); //serialize the data and send it
 							sendFile = false;
 							inputFile.close();//close file
 						}

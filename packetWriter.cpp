@@ -35,11 +35,11 @@ int32_t fileSizeReader(ifstream* file)
 * PARAMETERS  : ifstream* file - a pointer to the file to read
 * RETURNS     : int with the status of end of file
 */
-int32_t fileReader(ifstream* file, unsigned char buffer[])
+int32_t fileReader(ifstream* file, char buffer[])
 {
 	if (!file->eof()) //while not at end of file
 	{
-		file->read((char*)buffer, kPayloadSize); //read the buffer
+		file->read(buffer, kPayloadSize); //read the buffer
 		return kNotEndOfFile;
 	}
 	else
