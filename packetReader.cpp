@@ -56,5 +56,7 @@ int32_t fileWriter(ofstream* file, char buffer[])
 
 
 		cout << "file written\n";
+		 
 	}
+	return kSuccess; // putting this here since without it the program would not compile but we can change it later
 }
