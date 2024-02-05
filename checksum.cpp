@@ -2,6 +2,8 @@
 
 #include "FileTransfer.h"
 #include "CRC.h"
+#include <iostream>
+#include <vector>
 
 /*
 * FUNCTION    : hextoString()
@@ -35,7 +37,7 @@ string hextoString(uint32_t number) {
 */
 string generateChecksum(const string& fileName)
 {
-	unsigned char buffer[kBufferSize]; //buffer variable
+	//unsigned char buffer[kBufferSize]; //buffer variable
 
 	// open the file to read binary 
 	ifstream userFile(fileName, ios::binary);
@@ -45,16 +47,20 @@ string generateChecksum(const string& fileName)
 	}
 
 	// initialize the crc variable according to the rules of the CRC library
-	CRC::Table<uint32_t, 32> crcTable = CRC::CRC_32().MakeTable();
+	CRC::Table<uint32_t, 32> crcTable = CRC::CRC_32().MakeTable(); 
+
+	//grab the first value 
 	uint32_t crc = CRC::CRC_32().initialValue;
 
+	vector<char> buffer(kBufferSize); // creating file buffer
 
-	while (!userFile.eof()) {
-		userFile.read(buffer, kBufferSize); 
+	while (userFile.read(buffer.data(), kBufferSize)) {
+		crc = CRC::Calculate(buffer.data(), userFile.gcount(), crcTable, crc); 
 	}
-
-
-	//crc = CRC::Finalize(crc, );
+	
+	
+	//inline CRCType CRC::Finalize(CRCType remainder, CRCType finalXOR, bool reflectOutput)
+	crc = CRC::Finalize(crc, crcTable.GetParameters().finalXOR, crcTable.GetParameters().reflectOutput);
 
 
 	string checksumStr; // string that should contain the final checksum string
