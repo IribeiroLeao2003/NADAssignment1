@@ -21,7 +21,7 @@
     <ClInclude Include="Net.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\..\Downloads\CRC.h">
+    <ClInclude Include="CRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
