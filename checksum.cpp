@@ -5,7 +5,8 @@
 
 /*
 * FUNCTION    : hextoString()
-* DESCRIPTION : This function takes an uint32_t and turns it into a hexadecimal string
+* DESCRIPTION : This function takes an uint32_t and turns it into a hexadecimal string. 
+*			  : The intention for this function is to support generateChecksum in creating a hexadecimal string which will be the checksum
 *
 * PARAMETERS  : uint32_t number - number to be turned into a hexadecimal string 
 *			  
@@ -17,22 +18,20 @@ string hextoString(uint32_t number) {
 	hexaStr[8] = '\0'; // Set the null terminator on spot 8
 
 	for (int i = 7; i >= 0; --i) {
-		hexaStr[i] = hexCode[number & 0xF]; // Get the equivalent hex digit
-		number >>= 4; // Shift to the next hex digit
+		hexaStr[i] = hexCode[number & 0xF]; // Get the equivalent hex digit and fill it in the hexaStr
+		number >>= 4; // Go or shift to the next hex digit
 	} 
 
-	return string(hexaStr); // Convert to string and return
+	return string(hexaStr); // Convert to string and return to generateChecksum
 }
 
 
 /*
-* FUNCTION    : serializeData()
-* DESCRIPTION : This function takes an int32_t, char array, and unsigned char array
-			  : and serializes the int and char array and saves it to the unsigned char array
-* PARAMETERS  : int32_t intData - the int data to save
-*			  : char charData[] - the char data to save
-*			  : unsigned char serializedData[] - the array to save the serialized data to
-* RETURNS     : int32_t kSuccess on success and kFailure on failure
+* FUNCTION    : generateChecksum()
+* DESCRIPTION : This function takes an const string containing the file name, it opens the file and generates a checksum with the help of the CRC library 
+* PARAMETERS  : const string& fileName - Name of the file to be open 
+*			 
+* RETURNS     : string checksumStr on success and "" on failure
 */
 string generateChecksum(const string& fileName)
 {
@@ -41,7 +40,7 @@ string generateChecksum(const string& fileName)
 	// open the file to read binary 
 	ifstream userFile(fileName, ios::binary);
 	if (!userFile.is_open()) {
-		cerr << "Failed to open file: " << fileName << endl;
+		cerr << "Failed to open file for checksum: " << fileName << endl;
 		return "";
 	}
 
@@ -51,7 +50,7 @@ string generateChecksum(const string& fileName)
 
 
 	while (!userFile.eof()) {
-
+		userFile.read(buffer, kBufferSize); 
 	}
 
 
@@ -60,6 +59,8 @@ string generateChecksum(const string& fileName)
 
 	string checksumStr; // string that should contain the final checksum string
 	return checksumStr; 
+
+	//pseudocode to serve as a guide
 
 	//Open file binary 
 	//if File isnt open 
