@@ -14,18 +14,17 @@
 *			  
 * RETURNS     : char hexaStr that contains the hexadecimal string
 */
-string hextoString(uint32_t number) {
+void hextoCharArray(uint32_t number, char hexaStr[9]) {
 	const char* hexCode = "0123456789ABCDEF"; // All hex digits
-	char hexaStr[9]; // 8 hex chars + null terminator for a 32-bit number
 	hexaStr[8] = '\0'; // Set the null terminator on spot 8
 
 	for (int i = 7; i >= 0; --i) {
 		hexaStr[i] = hexCode[number & 0xF]; // Get the equivalent hex digit and fill it in the hexaStr
 		number >>= 4; // Go or shift to the next hex digit
-	} 
-
-	return string(hexaStr); // Convert to string and return to generateChecksum
+	}
 }
+
+
 
 
 /*
@@ -35,9 +34,10 @@ string hextoString(uint32_t number) {
 *			 
 * RETURNS     : string checksumStr on success and "" on failure
 */
-string generateChecksum(const string& fileName)
+string generateChecksum(const string& fileName, char checksumStr[9])
 {
-	//unsigned char buffer[kBufferSize]; //buffer variable
+	
+	vector<char> buffer(kBufferSize); // creating file buffer
 
 	// open the file to read binary 
 	ifstream userFile(fileName, ios::binary);
@@ -52,44 +52,24 @@ string generateChecksum(const string& fileName)
 	//grab the first value 
 	uint32_t crc = CRC::CRC_32().initialValue;
 
-	vector<char> buffer(kBufferSize); // creating file buffer
+	
 
-	while (userFile.read(buffer.data(), kBufferSize)) {
+	//reading up to kBufferSize in bytes
+	while (userFile.read(buffer.data(), kBufferSize)) { 
+		//for each line read into the buffer, crc is updated 
+		// after the loop is finished, the final checksum value is hold inside the crc 
 		crc = CRC::Calculate(buffer.data(), userFile.gcount(), crcTable, crc); 
 	}
 	
 	
 	//inline CRCType CRC::Finalize(CRCType remainder, CRCType finalXOR, bool reflectOutput)
-	crc = CRC::Finalize(crc, crcTable.GetParameters().finalXOR, crcTable.GetParameters().reflectOutput);
-
-
-	string checksumStr; // string that should contain the final checksum string
-	return checksumStr; 
-
-	//pseudocode to serve as a guide
-
-	//Open file binary 
-	//if File isnt open 
-	//			Give error message
-	//			return empty string
-
-	// Declare a buffer (unsigned char)
-
-	//initialize crc
-
-	// While not at the end of the file
-	//		Read some data into the buffer
-	//		update crc with the buffer
-
-
-	// Finalize CRC (can depend on which CRC we are using)
+	//auto finalXORValue = crcTable.GetParameters().finalXOR;
+	//auto reflectOutput = crcTable.GetParameters().reflectOutput;
+	// remainder is the result of the reading loop that is inside crc 
+	//finalXOR, final value of XOR with the remainder 
+	//uint32_t finalCRC = CRC::Finalize<uint32_t, 32>(crc, finalXORValue, reflectOutput);
 	
-	
-	
-	// Declare checksum as a string or char * (we will have to check on that)
-	// convert src to hexadecimal and store inside checksum
-
-
-	//return checksum
+	 hextoCharArray(crc, checksumStr); // string that should contain the final checksum string, passing the crc inside of the hextoString function 
+										
 
 }
