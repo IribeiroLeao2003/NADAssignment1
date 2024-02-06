@@ -60,7 +60,7 @@ int32_t fileReader(ifstream* file, char buffer[])
 */
 int32_t serializeData(int32_t intData, char charData[], unsigned char serializedData[])
 {
-	if (sizeof(intData) + sizeof(charData) < sizeof(serializedData)) //make sure our data isn't too big to fit
+	if (sizeof(intData) + sizeof(charData) < kPayloadSize) //make sure our data isn't too big to fit
 	{
 		//mark our location
 		unsigned char* pDataPoint = serializedData;

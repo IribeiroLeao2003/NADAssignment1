@@ -11,7 +11,7 @@ string fileNameExtractor(string filePath)
 
 	if (slashLoc + kIgnoreSlash == filePath.length()) //check if what we found was actually at the end of the string
 	{
-		filePath.erase(slashLoc); //remove end character
+		//filePath.erase(slashLoc); //remove end character
 		slashLoc = filePath.find_last_of("/"); //find again
 		substring = filePath.substr(slashLoc + kIgnoreSlash); //add one so we ignore the /
 	}

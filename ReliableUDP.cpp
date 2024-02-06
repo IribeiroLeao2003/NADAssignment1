@@ -160,7 +160,7 @@ int main(int argc, char* argv[])
 		if (argc == 3)
 		{
 			filePath = argv[2]; //copy name to string
-			fileName = fileNameExtractor(fileName); //ensure we just have the file name
+			fileName = fileNameExtractor(filePath); //ensure we just have the file name
 			if (fileName.length() <= kPayloadSize)
 			{
 				sendFile = true; //we're sending a file
