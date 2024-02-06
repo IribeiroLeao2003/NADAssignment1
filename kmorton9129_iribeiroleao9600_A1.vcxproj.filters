@@ -29,9 +29,6 @@
     <ClCompile Include="ReliableUDP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="testing.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="packetWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -41,7 +38,7 @@
     <ClCompile Include="checksum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileNameProccessor.cpp">
+    <ClCompile Include="Misc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

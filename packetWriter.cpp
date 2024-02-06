@@ -58,14 +58,59 @@ int32_t fileReader(ifstream* file, char buffer[])
 *			  : unsigned char serializedData[] - the array to save the serialized data to
 * RETURNS     : int32_t kSuccess on success and kFailure on failure
 */
-int32_t serializeData(int32_t intData, char charData[], unsigned char serializedData[])
+int32_t serializeData(char packetType, int32_t intData, char charData[], unsigned char serializedData[])
 {
 	if (sizeof(intData) + sizeof(charData) < kPayloadSize) //make sure our data isn't too big to fit
 	{
 		//mark our location
 		unsigned char* pDataPoint = serializedData;
 
+		//copy char
+		memcpy(pDataPoint, &packetType, sizeof(packetType));
+		//move pointer ahead
+		pDataPoint += sizeof(packetType);
+
 		//copy int
+		memcpy(pDataPoint, &intData, sizeof(intData));
+		//move pointer ahead
+		pDataPoint += sizeof(intData);
+
+		//copy charData
+		memcpy(pDataPoint, charData, sizeof(charData));
+		return kSuccess;
+	}
+	else
+	{
+		return kFailure;
+	}
+
+
+}
+
+
+/*
+* FUNCTION    : serializeData64()
+* DESCRIPTION : This function takes a char, int64_t, char array, and unsigned char array
+			  : and serializes the int and char array and saves it to the unsigned char array
+* PARAMETERS  : char packetType - the type of packet this is
+*			  : int64_t intData - the int data to save
+*			  : char charData[] - the char data to save
+*			  : unsigned char serializedData[] - the array to save the serialized data to
+* RETURNS     : int32_t kSuccess on success and kFailure on failure
+*/
+int32_t serializeData64(char packetType, int64_t intData, char charData[], unsigned char serializedData[])
+{
+	if (sizeof(intData) + sizeof(charData) < kPayloadSize) //make sure our data isn't too big to fit
+	{
+		//mark our location
+		unsigned char* pDataPoint = serializedData;
+
+		//copy char
+		memcpy(pDataPoint, &packetType, sizeof(packetType));
+		//move pointer ahead
+		pDataPoint += sizeof(packetType);
+
+		//copy int64
 		memcpy(pDataPoint, &intData, sizeof(intData));
 		//move pointer ahead
 		pDataPoint += sizeof(intData);

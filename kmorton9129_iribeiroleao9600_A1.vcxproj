@@ -133,11 +133,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="checksum.cpp" />
-    <ClCompile Include="FileNameProccessor.cpp" />
+    <ClCompile Include="Misc.cpp" />
     <ClCompile Include="packetReader.cpp" />
     <ClCompile Include="packetWriter.cpp" />
     <ClCompile Include="ReliableUDP.cpp" />
-    <ClCompile Include="testing.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
