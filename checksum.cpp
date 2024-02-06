@@ -14,7 +14,7 @@
 *			  
 * RETURNS     : char hexaStr that contains the hexadecimal string
 */
-void hextoCharArray(uint32_t number, char hexaStr[9]) {
+void hextoCharArray(uint32_t number, char hexaStr[kPayloadSize]) {
 	const char* hexCode = "0123456789ABCDEF"; // All hex digits
 	hexaStr[8] = '\0'; // Set the null terminator on spot 8
 
@@ -34,7 +34,7 @@ void hextoCharArray(uint32_t number, char hexaStr[9]) {
 *			 
 * RETURNS     : string checksumStr on success and "" on failure
 */
-string generateChecksum(const string& fileName, char checksumStr[9])
+void generateChecksum(const string& fileName, char checksumStr[kPayloadSize])
 {
 	
 	vector<char> buffer(kBufferSize); // creating file buffer
@@ -43,7 +43,7 @@ string generateChecksum(const string& fileName, char checksumStr[9])
 	ifstream userFile(fileName, ios::binary);
 	if (!userFile.is_open()) {
 		cerr << "Failed to open file for checksum: " << fileName << endl;
-		return "";
+		return;
 	}
 
 	// initialize the crc variable according to the rules of the CRC library

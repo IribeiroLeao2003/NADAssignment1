@@ -265,7 +265,11 @@ int main(int argc, char* argv[])
 					else if (checksumSend)//first send has been done. Now we do file data
 					{
 						//send file data
-						string fileChecksum = generateChecksum(fileName);//generate checksum
+						char fileChecksum[kPayloadSize];
+						generateChecksum(fileName, fileChecksum); // generate checksum
+
+						//send file data
+						//string fileChecksum = generateChecksum(fileName, );//generate checksum
 
 						//checksum will need to be sent in chunks for big checksums
 						checksumSend = false; //done sending checksum
