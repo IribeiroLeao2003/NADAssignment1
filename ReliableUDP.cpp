@@ -126,7 +126,6 @@ int main(int argc, char* argv[])
 	bool checksumSend = false;
 	bool fileInfoSend = true;
 	string filePath = "";
-	bool badSend = false;
 
 	//server vars
 	bool receivedFileInfo = false;
@@ -149,8 +148,8 @@ int main(int argc, char* argv[])
 	if (argc >= 2)
 	{
 		int a, b, c, d;
-
-#pragma warning(suppress : 4996)
+		
+		#pragma warning(suppress : 4996)
 		if (sscanf(argv[1], "%d.%d.%d.%d", &a, &b, &c, &d))
 		{
 			mode = Client;
@@ -158,16 +157,8 @@ int main(int argc, char* argv[])
 		}
 
 		//check for file name in argv[2]
-		if (argc >= 3)
+		if (argc == 3)
 		{
-			if (argc == 4) //bad file transfer demo
-			{
-				if (strcmp(argv[3], "bad"))
-				{
-					badSend = true;
-				}
-			}
-
 			filePath = argv[2]; //copy name to string
 			fileName = fileNameExtractor(filePath); //ensure we just have the file name
 			if (fileName.length() <= kPayloadSize)
@@ -249,14 +240,12 @@ int main(int argc, char* argv[])
 		//First packet sent will be the file info packet. We will track when our first packet was sent with a bool
 		//All subsequent packets will contain the file data.
 		while (sendAccumulator > 1.0f / sendRate)
-		{
-			unsigned char packet[PacketSize];
+		{	
+			unsigned char packet[PacketSize];		
 
 			if (sendFile) //we have a file to send
 			{
 				ifstream inputFile(filePath, ifstream::binary); //open file
-
-
 				if (inputFile.is_open() == true)
 				{
 					if (fileInfoSend) //we haven't sent the first chunk of data yet
@@ -279,7 +268,8 @@ int main(int argc, char* argv[])
 						char fileChecksum[kPayloadSize];
 						generateChecksum(fileName, fileChecksum, &inputFile); // generate checksum
 
-						serializeData(1,fileChecksum, packet);
+						//send file data
+						//string fileChecksum = generateChecksum(fileName, );//generate checksum
 
 						//checksum will need to be sent in chunks for big checksums
 						checksumSend = false; //done sending checksum
@@ -327,18 +317,20 @@ int main(int argc, char* argv[])
 			//When done reading file verify checksum and then swtich back to default mode.
 			unsigned char packet[PacketSize];
 			int bytes_read = connection.ReceivePacket(packet, sizeof(packet));
+
 			char receivedChecksumValue[kPayloadSize + 1];
 			ofstream outputFile; // used to write into file 
+
 			if (bytes_read == 0) //empty packet
 			{
-				break;
+				break; //don't touch this is from original code
 			}
 			else //data in packet
 			{
 				int32_t intData = 0;
 				char charData[kPayloadSize] = { '\0' };
 				//first check for file name
-				deserializeData(packet, &intData, charData);
+				deserializeData(packet, &intData, charData); 
 
 				if (receivedFileInfo == false) //check if we have not started receiving a file
 				{
@@ -357,6 +349,7 @@ int main(int argc, char* argv[])
 				}
 				else //otherwise we're reciving file data
 				{
+					//create file with the given name
 					if (!outputFile.is_open())
 					{
 						// Open the file for writing while ensuring directory exists and I have writting permissions 
@@ -364,9 +357,8 @@ int main(int argc, char* argv[])
 						if (!outputFile)
 						{
 
-							printf("File could not be opened for writing %c\n", fileName.c_str());
+							printf("File could not be opened for writing %c\n", fileName);
 
-							return kFailure;
 						}
 					}
 					if (intData > 0) { // If there's data to write in the output file 
@@ -374,61 +366,65 @@ int main(int argc, char* argv[])
 					}
 					else if (intData == kEndOfFile) { // Check if end of file was reached 
 						outputFile.close();
-						break;
+						
+
+						//handle final data
 					}
 
-
+					
 				}
 
+
 			}
-
-			// show packets that were acked this frame
-
-#ifdef SHOW_ACKS
-			unsigned int* acks = NULL;
-			int ack_count = 0;
-			connection.GetReliabilitySystem().GetAcks(&acks, ack_count);
-			if (ack_count > 0)
-			{
-				printf("acks: %d", acks[0]);
-				for (int i = 1; i < ack_count; ++i)
-					printf(",%d", acks[i]);
-				printf("\n");
-			}
-#endif
-
-			// update connection
-
-			connection.Update(DeltaTime);
-
-			// show connection stats
-
-			statsAccumulator += DeltaTime;
-
-			while (statsAccumulator >= 0.25f && connection.IsConnected())
-			{
-				float rtt = connection.GetReliabilitySystem().GetRoundTripTime();
-
-				unsigned int sent_packets = connection.GetReliabilitySystem().GetSentPackets();
-				unsigned int acked_packets = connection.GetReliabilitySystem().GetAckedPackets();
-				unsigned int lost_packets = connection.GetReliabilitySystem().GetLostPackets();
-
-				float sent_bandwidth = connection.GetReliabilitySystem().GetSentBandwidth();
-				float acked_bandwidth = connection.GetReliabilitySystem().GetAckedBandwidth();
-
-				printf("rtt %.1fms, sent %d, acked %d, lost %d (%.1f%%), sent bandwidth = %.1fkbps, acked bandwidth = %.1fkbps\n",
-					rtt * 1000.0f, sent_packets, acked_packets, lost_packets,
-					sent_packets > 0.0f ? (float)lost_packets / (float)sent_packets * 100.0f : 0.0f,
-					sent_bandwidth, acked_bandwidth);
-
-				statsAccumulator -= 0.25f;
-			}
-
-			net::wait(DeltaTime);
+				
 		}
 
-		ShutdownSockets();
+		// show packets that were acked this frame
 
-		return 0;
+#ifdef SHOW_ACKS
+		unsigned int* acks = NULL;
+		int ack_count = 0;
+		connection.GetReliabilitySystem().GetAcks(&acks, ack_count);
+		if (ack_count > 0)
+		{
+			printf("acks: %d", acks[0]);
+			for (int i = 1; i < ack_count; ++i)
+				printf(",%d", acks[i]);
+			printf("\n");
+		}
+#endif
+
+		// update connection
+
+		connection.Update(DeltaTime);
+
+		// show connection stats
+
+		statsAccumulator += DeltaTime;
+
+		while (statsAccumulator >= 0.25f && connection.IsConnected())
+		{
+			float rtt = connection.GetReliabilitySystem().GetRoundTripTime();
+
+			unsigned int sent_packets = connection.GetReliabilitySystem().GetSentPackets();
+			unsigned int acked_packets = connection.GetReliabilitySystem().GetAckedPackets();
+			unsigned int lost_packets = connection.GetReliabilitySystem().GetLostPackets();
+
+			float sent_bandwidth = connection.GetReliabilitySystem().GetSentBandwidth();
+			float acked_bandwidth = connection.GetReliabilitySystem().GetAckedBandwidth();
+
+			printf("rtt %.1fms, sent %d, acked %d, lost %d (%.1f%%), sent bandwidth = %.1fkbps, acked bandwidth = %.1fkbps\n",
+				rtt * 1000.0f, sent_packets, acked_packets, lost_packets,
+				sent_packets > 0.0f ? (float)lost_packets / (float)sent_packets * 100.0f : 0.0f,
+				sent_bandwidth, acked_bandwidth);
+
+			statsAccumulator -= 0.25f;
+		}
+
+		net::wait(DeltaTime);
 	}
+
+	ShutdownSockets();
+
+	return 0;
 }
