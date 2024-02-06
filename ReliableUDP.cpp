@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
 		{
 			filePath = argv[2]; //copy name to string
 			fileName = fileNameExtractor(filePath); //ensure we just have the file name
-			if (fileName.length() <= kPayloadSize)
+			if (fileName.length() <= kFileNameSize)
 			{
 				sendFile = true; //we're sending a file
 			}
@@ -243,6 +243,7 @@ int main(int argc, char* argv[])
 		{	
 			unsigned char packet[PacketSize];
 			memset(packet, 0, sizeof(packet));
+			char packetType = 0;
 
 			if (sendFile) //we have a file to send
 			{
@@ -252,12 +253,15 @@ int main(int argc, char* argv[])
 					if (fileInfoSend) //we haven't sent the first chunk of data yet
 					{
 						//send our file info
-						int32_t fileSize = fileSizeReader(&inputFile);
-						char fileNameChar[kPayloadSize] = { "\0" };
+						packetType = kFileInfoPacket;
+						
+						char fileNameChar[kFileNameSize] = { "\0" };
 						#pragma warning(disable:4996);
 						strcpy(fileNameChar, fileName.c_str());
 
-						serializeData(fileSize, fileNameChar, packet); //serialize the data
+						int64_t currentTime = getTime();
+
+						serializeData64(packetType, currentTime, fileNameChar, packet); //serialize the data
 
 						//done our first send
 						checksumSend = true;
@@ -265,31 +269,34 @@ int main(int argc, char* argv[])
 					}
 					else if (checksumSend)//first send has been done. Now we do file data
 					{
+						packetType = kChecksumPacket;
 						//send file data
 						char fileChecksum[kPayloadSize];
+
+						int32_t fileSize = fileSizeReader(&inputFile);
 						generateChecksum(fileName, fileChecksum, &inputFile); // generate checksum
 
-						//send file data
-						//string fileChecksum = generateChecksum(fileName, );//generate checksum
+						serializeData(packetType, fileSize, fileChecksum, packet);
 
 						//checksum will need to be sent in chunks for big checksums
 						checksumSend = false; //done sending checksum
 					}
 					else //otherwise send file data
 					{
+						packetType = kFileDataPacket;
 						char fileBuffer[kPayloadSize] = { '\0' }; //the file data buffer
 
 						int32_t fileStatus = fileReader(&inputFile, fileBuffer); //read the data
 
 						if (fileStatus != kEndOfFile) //check if end of file
 						{
-							serializeData(fileStatus, fileBuffer, packet); //serialize the data and send it
+							serializeData(packetType, fileStatus, fileBuffer, packet); //serialize the data and send it
 
 						}
 						else //end of file close it
 						{
 							char emptyBuffer[kPayloadSize] = { '\0' }; //no data to send so just send an empty array
-							serializeData(fileStatus, fileBuffer, packet); //serialize the data and send it
+							serializeData(packetType, fileStatus, fileBuffer, packet); //serialize the data and send it
 							sendFile = false;
 							inputFile.close();//close file
 						}
@@ -317,6 +324,7 @@ int main(int argc, char* argv[])
 			// If the packet contains data send the data to be read and written to the disk
 			//When done reading file verify checksum and then swtich back to default mode.
 			unsigned char packet[PacketSize];
+			char packetType = 0;
 			int bytes_read = connection.ReceivePacket(packet, sizeof(packet));
 
 			char receivedChecksumValue[kPayloadSize + 1];
@@ -331,12 +339,9 @@ int main(int argc, char* argv[])
 				int32_t intData = 0;
 				char charData[kPayloadSize] = { '\0' };
 				//first check for file name
-				deserializeData(packet, &intData, charData); 
+				deserializeData(packet, &packetType , &intData, charData);
 
-				printf("%s\n", packet);
-				printf("%s\n", charData);
-
-				if (receivedFileInfo == false) //check if we have not started receiving a file
+				if (packetType == kFileInfoPacket) //check if we have not started receiving a file
 				{
 					receivedFileInfo = true; //we have now received a file
 
@@ -345,13 +350,13 @@ int main(int argc, char* argv[])
 					storedFileSize = intData; //store the file size
 
 				}
-				else if (receivedChecksum == false)
+				else if (packetType == kChecksumPacket)
 				{
 					memcpy(receivedChecksumValue, charData, kPayloadSize);
 					receivedChecksumValue[kPayloadSize] = '\0';
 					receivedChecksum = true;
 				}
-				else //otherwise we're reciving file data
+				else if (packetType == kFileDataPacket)//otherwise we're reciving file data
 				{
 					//create file with the given name
 					if (!outputFile.is_open())
@@ -361,7 +366,7 @@ int main(int argc, char* argv[])
 						if (!outputFile)
 						{
 
-							printf("File could not be opened for writing %c\n", fileName);
+							printf("File could not be opened for writing %c\n", fileName.c_str());
 
 						}
 					}

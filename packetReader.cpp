@@ -18,13 +18,17 @@
 *             : size_t dataChSize - the size of the dataCh array
 * RETURNS     : the number of bytes read from the serialized data or kFailure in case of 
 */
-int32_t deserializeData(unsigned char serData[], int32_t* intData, char chrData[]) {
+int32_t deserializeData(unsigned char serData[], char* packetType, int32_t* intData, char chrData[]) {
 	if (serData == nullptr || chrData == nullptr) {
 		return kError;
 	}
 
 	// Start at the beginning of the serialized data
 	unsigned char* pDataPoint = serData;
+
+	// Deserialize the char
+	memcpy(packetType, pDataPoint, sizeof(char)); //copy the char data from the serData to packetType
+	pDataPoint += sizeof(packetType); // Move the pointer past the char data
 
 	// Deserialize the int32_t
 	memcpy(intData, pDataPoint, sizeof(int32_t)); //copy the int data from the serData to dataInt
