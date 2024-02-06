@@ -71,7 +71,7 @@ int32_t serializeData(int32_t intData, char charData[], unsigned char serialized
 		pDataPoint += sizeof(intData);
 
 		//copy charData
-		memcpy(pDataPoint, &charData, sizeof(charData));
+		memcpy(pDataPoint, charData, sizeof(charData));
 		return kSuccess;
 	}
 	else

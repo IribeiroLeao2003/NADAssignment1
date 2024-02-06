@@ -241,7 +241,8 @@ int main(int argc, char* argv[])
 		//All subsequent packets will contain the file data.
 		while (sendAccumulator > 1.0f / sendRate)
 		{	
-			unsigned char packet[PacketSize];		
+			unsigned char packet[PacketSize];
+			memset(packet, 0, sizeof(packet));
 
 			if (sendFile) //we have a file to send
 			{
@@ -302,7 +303,7 @@ int main(int argc, char* argv[])
 				}
 
 			}
-			memset(packet, 0, sizeof(packet));
+			
 			connection.SendPacket(packet, sizeof(packet));
 			sendAccumulator -= 1.0f / sendRate;
 		}
@@ -332,6 +333,9 @@ int main(int argc, char* argv[])
 				//first check for file name
 				deserializeData(packet, &intData, charData); 
 
+				printf("%s\n", packet);
+				printf("%s\n", charData);
+
 				if (receivedFileInfo == false) //check if we have not started receiving a file
 				{
 					receivedFileInfo = true; //we have now received a file
@@ -353,7 +357,7 @@ int main(int argc, char* argv[])
 					if (!outputFile.is_open())
 					{
 						// Open the file for writing while ensuring directory exists and I have writting permissions 
-						outputFile.open(fileName, std::ios::binary | std::ios::out);
+						outputFile.open(fileName, std::ios::binary);
 						if (!outputFile)
 						{
 
