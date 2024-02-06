@@ -60,15 +60,6 @@ void generateChecksum(const string& fileName, char checksumStr[kPayloadSize], if
 		crc = CRC::Calculate(buffer.data(), userFile->gcount(), crcTable, crc); 
 	}
 	
-	
-	//inline CRCType CRC::Finalize(CRCType remainder, CRCType finalXOR, bool reflectOutput)
-	//auto finalXORValue = crcTable.GetParameters().finalXOR;
-	//auto reflectOutput = crcTable.GetParameters().reflectOutput;
-	// remainder is the result of the reading loop that is inside crc 
-	//finalXOR, final value of XOR with the remainder 
-	//uint32_t finalCRC = CRC::Finalize<uint32_t, 32>(crc, finalXORValue, reflectOutput);
-	
-	 hextoCharArray(crc, checksumStr); // string that should contain the final checksum string, passing the crc inside of the hextoString function 
-										
-
+	hextoCharArray(crc, checksumStr); // string that should contain the final checksum string, passing the crc inside of the hextoString function 
+									
 }
