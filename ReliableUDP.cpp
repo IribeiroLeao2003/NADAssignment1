@@ -126,6 +126,7 @@ int main(int argc, char* argv[])
 	bool checksumSend = false;
 	bool fileInfoSend = true;
 	string filePath = "";
+	bool badSend = false;
 
 	//server vars
 	bool receivedFileInfo = false;
@@ -157,8 +158,16 @@ int main(int argc, char* argv[])
 		}
 
 		//check for file name in argv[2]
-		if (argc == 3)
+		if (argc >= 3)
 		{
+			if (argc == 4) //bad file transfer demo
+			{
+				if (strcmp(argv[3], "bad"))
+				{
+					badSend = true;
+				}
+			}
+
 			filePath = argv[2]; //copy name to string
 			fileName = fileNameExtractor(filePath); //ensure we just have the file name
 			if (fileName.length() <= kPayloadSize)
@@ -255,7 +264,7 @@ int main(int argc, char* argv[])
 						//send our file info
 						int32_t fileSize = fileSizeReader(&inputFile);
 						char fileNameChar[kPayloadSize] = { "\0" };
-#pragma warning(disable:4996);
+						#pragma warning(disable:4996);
 						strcpy(fileNameChar, fileName.c_str());
 
 						serializeData(fileSize, fileNameChar, packet); //serialize the data
@@ -270,8 +279,7 @@ int main(int argc, char* argv[])
 						char fileChecksum[kPayloadSize];
 						generateChecksum(fileName, fileChecksum, &inputFile); // generate checksum
 
-						//send file data
-						//string fileChecksum = generateChecksum(fileName, );//generate checksum
+						serializeData(1,fileChecksum, packet);
 
 						//checksum will need to be sent in chunks for big checksums
 						checksumSend = false; //done sending checksum
@@ -356,7 +364,7 @@ int main(int argc, char* argv[])
 						if (!outputFile)
 						{
 
-							printf("File could not be opened for writing %c\n", fileName);
+							printf("File could not be opened for writing %c\n", fileName.c_str());
 
 							return kFailure;
 						}
