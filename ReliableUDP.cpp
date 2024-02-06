@@ -246,6 +246,8 @@ int main(int argc, char* argv[])
 			if (sendFile) //we have a file to send
 			{
 				ifstream inputFile(filePath, ifstream::binary); //open file
+
+				
 				if (inputFile.is_open() == true)
 				{
 					if (fileInfoSend) //we haven't sent the first chunk of data yet
@@ -317,6 +319,8 @@ int main(int argc, char* argv[])
 			//When done reading file verify checksum and then swtich back to default mode.
 			unsigned char packet[PacketSize];
 			int bytes_read = connection.ReceivePacket(packet, sizeof(packet));
+			char receivedChecksumValue[kPayloadSize + 1];
+			ofstream outputFile; // used to write into file 
 			if (bytes_read == 0) //empty packet
 			{
 				break;
@@ -339,14 +343,31 @@ int main(int argc, char* argv[])
 				}
 				else if (receivedChecksum == false)
 				{
-					//TODO add checksum proccess
+					memcpy(receivedChecksumValue, charData, kPayloadSize);
+					receivedChecksumValue[kPayloadSize] = '\0';
 					receivedChecksum = true;
 				}
 				else //otherwise we're reciving file data
 				{
-					//create file with the given name
-					
-				}
+					if (!outputFile.is_open())
+					{
+						// Open the file for writing while ensuring directory exists and I have writting permissions 
+						outputFile.open(fileName, std::ios::binary | std::ios::out);
+						if (!outputFile)
+						{
+							
+							printf("File could not be opened for writing %c\n", fileName);
+							
+							return kFailure;
+						}
+					}
+					if (intData > 0) { // If there's data to write in the output file 
+						outputFile.write(charData, intData);
+					}
+					else if (intData == kEndOfFile) { // Check if end of file was reached 
+						outputFile.close();
+						break;
+					}
 
 
 			}
