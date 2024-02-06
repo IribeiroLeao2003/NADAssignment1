@@ -357,7 +357,7 @@ int main(int argc, char* argv[])
 					if (!outputFile.is_open())
 					{
 						// Open the file for writing while ensuring directory exists and I have writting permissions 
-						outputFile.open(fileName, std::ios::binary);
+						outputFile.open(fileName, std::ofstream::binary);
 						if (!outputFile)
 						{
 
