@@ -26,7 +26,7 @@ const int32_t kFailure = -1;
 const int32_t kBufferSize = 1024; //setting it up as a test, we can change the number as much as nessesary 
 
 int32_t fileSizeReader(ifstream* file);
-void generateChecksum(const string& fileName, char checksumStr[kPayloadSize]);
+void generateChecksum(const string& fileName, char checksumStr[kPayloadSize], ifstream* userFile);
 int32_t fileReader(ifstream* file, char buffer[]);
 int32_t serializeData(int32_t intData, char charData[], unsigned char serializedData[]);
 string fileNameExtractor(string filePath);
