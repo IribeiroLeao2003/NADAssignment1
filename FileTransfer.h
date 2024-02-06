@@ -38,6 +38,7 @@ int32_t serializeData(char packetType, int32_t intData, char charData[], unsigne
 int32_t serializeData64(char packetType, int64_t intData, char charData[], unsigned char serializedData[]);
 string fileNameExtractor(string filePath);
 int32_t deserializeData(unsigned char serData[], char* packetType, int32_t* dataInt, char dataCh[]);
+int32_t deserializeData64(unsigned char serData[], char* packetType, int64_t* intData, char chrData[]);
 int32_t fileWriter(ofstream* file, char buffer[]);
 int64_t getTime();
 

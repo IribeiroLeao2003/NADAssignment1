@@ -337,9 +337,17 @@ int main(int argc, char* argv[])
 			else //data in packet
 			{
 				int32_t intData = 0;
+				int64_t timeData = 0;
 				char charData[kPayloadSize] = { '\0' };
 				//first check for file name
-				deserializeData(packet, &packetType , &intData, charData);
+				if (packet[0] != kFileInfoPacket)
+				{
+					deserializeData(packet, &packetType, &intData, charData);
+				}
+				else
+				{
+					deserializeData64(packet, &packetType, &timeData, charData);
+				}				
 
 				if (packetType == kFileInfoPacket) //check if we have not started receiving a file
 				{
