@@ -116,7 +116,7 @@ int32_t serializeData64(char packetType, int64_t intData, char charData[], unsig
 		pDataPoint += sizeof(intData);
 
 		//copy charData
-		memcpy(pDataPoint, charData, sizeof(charData));
+		memcpy(pDataPoint, charData, kFileNameSize);
 		return kSuccess;
 	}
 	else

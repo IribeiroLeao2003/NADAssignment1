@@ -61,11 +61,11 @@ int32_t deserializeData64(unsigned char serData[], char* packetType, int64_t* in
 
 	// Deserialize the char
 	memcpy(packetType, pDataPoint, sizeof(char)); //copy the char data from the serData to packetType
-	pDataPoint += sizeof(packetType); // Move the pointer past the char data
+	pDataPoint += sizeof(char); // Move the pointer past the char data
 
-	// Deserialize the int32_t
+	// Deserialize the int64_t
 	memcpy(intData, pDataPoint, sizeof(int64_t)); //copy the int data from the serData to dataInt
-	pDataPoint += sizeof(*intData); // Move the pointer past the int data
+	pDataPoint += sizeof(int64_t); // Move the pointer past the int data
 
 	// Deserialize the char data
 	memcpy(chrData, pDataPoint, kFileNameSize);

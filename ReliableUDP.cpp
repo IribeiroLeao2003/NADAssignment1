@@ -261,8 +261,9 @@ int main(int argc, char* argv[])
 
 						int64_t currentTime = getTime();
 
+						printf("%s\n", fileNameChar);
 						serializeData64(packetType, currentTime, fileNameChar, packet); //serialize the data
-
+						printf("%s\n", packet);
 						//done our first send
 						checksumSend = true;
 						fileInfoSend = false;
@@ -354,6 +355,8 @@ int main(int argc, char* argv[])
 					receivedFileInfo = true; //we have now received a file
 
 					fileName = charData; //copy the file name over
+
+					printf("%s", fileName.c_str());
 
 					storedFileSize = intData; //store the file size
 
