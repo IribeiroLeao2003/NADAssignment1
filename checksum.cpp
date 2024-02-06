@@ -34,14 +34,13 @@ void hextoCharArray(uint32_t number, char hexaStr[kPayloadSize]) {
 *			 
 * RETURNS     : string checksumStr on success and "" on failure
 */
-void generateChecksum(const string& fileName, char checksumStr[kPayloadSize])
+void generateChecksum(const string& fileName, char checksumStr[kPayloadSize], ifstream* userFile)
 {
 	
 	vector<char> buffer(kBufferSize); // creating file buffer
 
 	// open the file to read binary 
-	ifstream userFile(fileName, ios::binary);
-	if (!userFile.is_open()) {
+	if (!userFile->is_open()) {
 		cerr << "Failed to open file for checksum: " << fileName << endl;
 		return;
 	}
@@ -55,10 +54,10 @@ void generateChecksum(const string& fileName, char checksumStr[kPayloadSize])
 	
 
 	//reading up to kBufferSize in bytes
-	while (userFile.read(buffer.data(), kBufferSize)) { 
+	while (userFile->read(buffer.data(), kBufferSize)) { 
 		//for each line read into the buffer, crc is updated 
 		// after the loop is finished, the final checksum value is hold inside the crc 
-		crc = CRC::Calculate(buffer.data(), userFile.gcount(), crcTable, crc); 
+		crc = CRC::Calculate(buffer.data(), userFile->gcount(), crcTable, crc); 
 	}
 	
 	

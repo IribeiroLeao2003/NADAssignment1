@@ -268,7 +268,7 @@ int main(int argc, char* argv[])
 					{
 						//send file data
 						char fileChecksum[kPayloadSize];
-						generateChecksum(fileName, fileChecksum); // generate checksum
+						generateChecksum(fileName, fileChecksum, &inputFile); // generate checksum
 
 						//send file data
 						//string fileChecksum = generateChecksum(fileName, );//generate checksum
