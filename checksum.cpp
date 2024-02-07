@@ -59,7 +59,7 @@ void generateChecksum(const string& fileName, char checksumStr[kPayloadSize], if
 		// after the loop is finished, the final checksum value is hold inside the crc 
 		crc = CRC::Calculate(buffer.data(), userFile->gcount(), crcTable, crc); 
 	}
-	
+	userFile->seekg(0, userFile->beg); //go back to beginning of file
 	hextoCharArray(crc, checksumStr); // string that should contain the final checksum string, passing the crc inside of the hextoString function 
 									
 }

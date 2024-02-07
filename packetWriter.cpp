@@ -40,7 +40,7 @@ int32_t fileReader(ifstream* file, char buffer[])
 	if (!file->eof()) //while not at end of file
 	{
 		file->read(buffer, kPayloadSize); //read the buffer
-		return kNotEndOfFile;
+		return kPayloadSize;
 	}
 	else
 	{
