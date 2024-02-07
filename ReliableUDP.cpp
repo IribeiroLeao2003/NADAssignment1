@@ -261,9 +261,7 @@ int main(int argc, char* argv[])
 
 						int64_t currentTime = getTime();
 
-						printf("%s\n", fileNameChar);
 						serializeData64(packetType, currentTime, fileNameChar, packet); //serialize the data
-						printf("%s\n", packet);
 						//done our first send
 						checksumSend = true;
 						fileInfoSend = false;
@@ -377,12 +375,12 @@ int main(int argc, char* argv[])
 						if (!outputFile)
 						{
 
-							printf("File could not be opened for writing %c\n", fileName.c_str());
+							printf("File could not be opened for writing %s\n", fileName.c_str());
 
 						}
 					}
 					if (intData != kEndOfFile) { // If there's data to write in the output file 
-						outputFile.write(charData, intData);
+						outputFile.write(charData, sizeof(charData));
 					}
 					else if (intData == kEndOfFile) { // Check if end of file was reached 
 						outputFile.close();

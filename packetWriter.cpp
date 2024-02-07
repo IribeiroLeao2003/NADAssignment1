@@ -76,7 +76,7 @@ int32_t serializeData(char packetType, int32_t intData, char charData[], unsigne
 		pDataPoint += sizeof(int32_t);
 
 		//copy charData
-		memcpy(pDataPoint, charData, sizeof(kPayloadSize));
+		memcpy(pDataPoint, charData, kPayloadSize);
 		return kSuccess;
 	}
 	else
