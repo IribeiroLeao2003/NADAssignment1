@@ -28,11 +28,11 @@ int32_t deserializeData(unsigned char serData[], char* packetType, int32_t* intD
 
 	// Deserialize the char
 	memcpy(packetType, pDataPoint, sizeof(char)); //copy the char data from the serData to packetType
-	pDataPoint += sizeof(packetType); // Move the pointer past the char data
+	pDataPoint += sizeof(char); // Move the pointer past the char data
 
 	// Deserialize the int32_t
 	memcpy(intData, pDataPoint, sizeof(int32_t)); //copy the int data from the serData to dataInt
-	pDataPoint += sizeof(*intData); // Move the pointer past the int data
+	pDataPoint += sizeof(int32_t); // Move the pointer past the int data
 
 	// Deserialize the char data
 	memcpy(chrData, pDataPoint, kPayloadSize);

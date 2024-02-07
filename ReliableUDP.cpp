@@ -381,7 +381,7 @@ int main(int argc, char* argv[])
 
 						}
 					}
-					if (intData > 0) { // If there's data to write in the output file 
+					if (intData != kEndOfFile) { // If there's data to write in the output file 
 						outputFile.write(charData, intData);
 					}
 					else if (intData == kEndOfFile) { // Check if end of file was reached 

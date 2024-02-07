@@ -66,17 +66,17 @@ int32_t serializeData(char packetType, int32_t intData, char charData[], unsigne
 		unsigned char* pDataPoint = serializedData;
 
 		//copy char
-		memcpy(pDataPoint, &packetType, sizeof(packetType));
+		memcpy(pDataPoint, &packetType, sizeof(char));
 		//move pointer ahead
-		pDataPoint += sizeof(packetType);
+		pDataPoint += sizeof(char);
 
 		//copy int
-		memcpy(pDataPoint, &intData, sizeof(intData));
+		memcpy(pDataPoint, &intData, sizeof(int32_t));
 		//move pointer ahead
-		pDataPoint += sizeof(intData);
+		pDataPoint += sizeof(int32_t);
 
 		//copy charData
-		memcpy(pDataPoint, charData, sizeof(charData));
+		memcpy(pDataPoint, charData, sizeof(kPayloadSize));
 		return kSuccess;
 	}
 	else
@@ -106,14 +106,14 @@ int32_t serializeData64(char packetType, int64_t intData, char charData[], unsig
 		unsigned char* pDataPoint = serializedData;
 
 		//copy char
-		memcpy(pDataPoint, &packetType, sizeof(packetType));
+		memcpy(pDataPoint, &packetType, sizeof(char));
 		//move pointer ahead
-		pDataPoint += sizeof(packetType);
+		pDataPoint += sizeof(char);
 
 		//copy int64
-		memcpy(pDataPoint, &intData, sizeof(intData));
+		memcpy(pDataPoint, &intData, sizeof(int64_t));
 		//move pointer ahead
-		pDataPoint += sizeof(intData);
+		pDataPoint += sizeof(int64_t);
 
 		//copy charData
 		memcpy(pDataPoint, charData, kFileNameSize);
