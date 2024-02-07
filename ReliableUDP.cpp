@@ -127,6 +127,10 @@ int main(int argc, char* argv[])
 	bool fileInfoSend = true;
 	string filePath = "";
 	ifstream inputFile;
+	int32_t fileSize = 0;
+	double numOfReads = 0;
+	int currentNumOfReads = 0;
+	int32_t finalBytes = 0;
 
 	//server vars
 	bool receivedFileInfo = false;
@@ -289,9 +293,31 @@ int main(int argc, char* argv[])
 							//send file data
 							char fileChecksum[kPayloadSize];
 
-							int32_t fileSize = fileSizeReader(&inputFile);
+							fileSize = fileSizeReader(&inputFile);
 							generateChecksum(fileName, fileChecksum, &inputFile); // generate checksum
 
+							if (fileSize % kPayloadSize != 0) //if there's a remainder
+							{
+								numOfReads = fileSize / kPayloadSize;
+								//round down
+								numOfReads = floor(numOfReads);
+
+								if (numOfReads == 0) //if zero then it's less than the payload size
+								{
+									finalBytes = fileSize; //then the payload is the size of the file
+								}
+								else
+								{
+									finalBytes = numOfReads * kPayloadSize; //the size of the array in the final packet of file data
+								}							
+							}
+							else //if no remainder last one will be payload size
+							{
+								finalBytes = kPayloadSize;
+							}
+							
+
+							//file wouldn't read later without this for some reason.
 							inputFile.close();
 							inputFile.open(filePath, ifstream::binary);
 
@@ -305,12 +331,19 @@ int main(int argc, char* argv[])
 							packetType = kFileDataPacket;
 							char fileBuffer[kPayloadSize] = { '\0' }; //the file data buffer						
 
+
+							currentNumOfReads++; //increment number of reads
 							int32_t dataSize = fileReader(&inputFile, fileBuffer); //read the data
+							
+							if (currentNumOfReads > numOfReads)
+							{
+								dataSize = finalBytes; //this array will be smaller because it's our last
+							}
 
 
 							if (dataSize != kEndOfFile) //check if end of file
 							{
-								serializeData(packetType, dataSize, fileBuffer, packet); //serialize the data and send it
+								serializeData(packetType, dataSize, fileBuffer, packet); //serialize the data and send it							
 							}
 							else //end of file close it
 							{
@@ -388,7 +421,7 @@ int main(int argc, char* argv[])
 				else if ((packetType == kFileDataPacket) && !isFileClosed)//otherwise we're reciving file data
 				{
 
-					if (intData == 0) {
+					if (intData < kPayloadSize){
 						printf("\nno data to print\n");
 					}
 					else {
