@@ -85,10 +85,10 @@ int32_t fileWriter(ofstream* file, char buffer[])
 {
 	if (file->is_open() == true)
 	{
-		unsigned char buffer[256] = { '0' }; //our buffer of data
+		
 		//memset(buffer, 0, 256); //this allows us to copy non text files!
 
-		file->write((char*)buffer, 256); //write the buffer to file
+		file->write(buffer, 256); //write the buffer to file
 
 
 		cout << "file written\n";

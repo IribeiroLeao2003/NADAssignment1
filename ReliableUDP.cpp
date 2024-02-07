@@ -383,6 +383,13 @@ int main(int argc, char* argv[])
 				}
 				else if (packetType == kFileDataPacket)//otherwise we're reciving file data
 				{
+
+					if (intData == 0) {
+						printf("no data to print");
+					}
+					else {
+						printf("there is data to print");
+					}
 					//create file with the given name
 					if (!outputFile.is_open())
 					{
@@ -395,7 +402,7 @@ int main(int argc, char* argv[])
 
 						}
 					}
-					if (intData != 0) { // If there's data to write in the output file 
+					if (intData > 0) { // If there's data to write in the output file 
 						
 						currentFileSize += intData;
 
