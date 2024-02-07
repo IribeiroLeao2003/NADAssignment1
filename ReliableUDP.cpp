@@ -289,42 +289,60 @@ int main(int argc, char* argv[])
 						}
 						else if (checksumSend)//first send has been done. Now we do file data
 						{
-							packetType = kChecksumPacket;
-							//send file data
+							checksumSend = false; // No longer in checksum 
 							char fileChecksum[kPayloadSize];
 
-							fileSize = fileSizeReader(&inputFile);
-							generateChecksum(fileName, fileChecksum, &inputFile); // generate checksum
-
-							if (fileSize % kPayloadSize != 0) //if there's a remainder
-							{
-								numOfReads = fileSize / kPayloadSize;
-								//round down
-								numOfReads = floor(numOfReads);
-
-								if (numOfReads == 0) //if zero then it's less than the payload size
-								{
-									finalBytes = fileSize; //then the payload is the size of the file
-								}
-								else
-								{
-									finalBytes = numOfReads * kPayloadSize; //the size of the array in the final packet of file data
-								}							
-							}
-							else //if no remainder last one will be payload size
-							{
-								finalBytes = kPayloadSize;
-							}
 							
+							fileSize = fileSizeReader(&inputFile);
+							generateChecksum(fileName, fileChecksum, &inputFile); // Generate checksum
+							serializeData(kChecksumPacket, fileSize, fileChecksum, packet); // Sending checksum packet
+							connection.SendPacket(packet, sizeof(packet));
 
-							//file wouldn't read later without this for some reason.
+							// preparing for data transmission
+							double totalPackets = ceil(static_cast<double>(fileSize) / kPayloadSize);
+							int currentPacket = 0;
+
+							// reopen file to reset pointer
 							inputFile.close();
-							inputFile.open(filePath, ifstream::binary);
+							inputFile.open(filePath, std::ifstream::binary);
 
-							serializeData(packetType, fileSize, fileChecksum, packet);
+							
+							while (currentPacket < totalPackets) {
+								char buffer[kPayloadSize] = { '\0' };		// creating file buffer
+								int32_t readSize = kPayloadSize;
 
-							//checksum will need to be sent in chunks for big checksums
-							checksumSend = false; //done sending checksum
+								// Adjusting read size for last packet
+								if (currentPacket == totalPackets - 1) {
+									int lastPacketSize = fileSize % kPayloadSize;
+									if (lastPacketSize > 0) {
+										readSize = lastPacketSize;
+									}
+								}
+
+								// Read file data into buffer
+								inputFile.read(buffer, readSize);
+								if (!inputFile.good() && !inputFile.eof()) {
+									printf("Error during data transmission\n");
+									
+									break; // out of the while loop
+								}
+
+								// serialize the data and send the packet
+								serializeData(kFileDataPacket, readSize, buffer, packet);
+								connection.SendPacket(packet, sizeof(packet));
+
+								currentPacket++;
+							}
+
+							
+							if (fileSize % kPayloadSize == 0) { // If remainder exists then send EOF indicator in form of packet
+								char buffer[kPayloadSize] = { 0 }; // Create an empty buffer 
+								int eofIndicatorSize = 0; // create payload to indicate EOF (can change later if needed) 
+								serializeData(kEndOfFile, eofIndicatorSize, buffer, packet); //Serializing Data
+								connection.SendPacket(packet, sizeof(packet)); // Send EOF indicator packet
+							}
+
+							inputFile.close(); // close File
 						}
 						else //otherwise send file data
 						{
@@ -516,3 +534,4 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+
