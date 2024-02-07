@@ -139,6 +139,10 @@ int main(int argc, char* argv[])
 	int32_t finalFileSize = 0;
 	int32_t currentFileSize = 0;
 
+
+	bool isFileClosed = false;
+
+
 	enum Mode
 	{
 		Client,
@@ -381,14 +385,14 @@ int main(int argc, char* argv[])
 					receivedChecksumValue[kPayloadSize] = '\0';
 					receivedChecksum = true;
 				}
-				else if (packetType == kFileDataPacket)//otherwise we're reciving file data
+				else if ((packetType == kFileDataPacket) && !isFileClosed)//otherwise we're reciving file data
 				{
 
 					if (intData == 0) {
-						printf("no data to print");
+						printf("\nno data to print\n");
 					}
 					else {
-						printf("there is data to print");
+						printf("\nthere is data to print\n");
 					}
 					//create file with the given name
 					if (!outputFile.is_open())
@@ -404,19 +408,20 @@ int main(int argc, char* argv[])
 					}
 					if (intData > 0) { // If there's data to write in the output file 
 						
-						currentFileSize += intData;
+						/*currentFileSize += intData;*/
 
-						if (currentFileSize > finalFileSize)
-						{
-							int32_t subtractEnd = currentFileSize - finalFileSize; //get difference of the useless data
-							intData -= subtractEnd; //we only want to write the good data
-						}
+						//if (currentFileSize > finalFileSize)
+						//{
+						//	int32_t subtractEnd = currentFileSize - finalFileSize; //get difference of the useless data
+						//	intData -= subtractEnd; //we only want to write the good data
+						//}
 						outputFile.write(charData, intData);
 						
 					}
-					else if (intData == kEndOfFile && currentFileSize == finalFileSize) { // Check if end of file was reached 
+					else if (intData == kEndOfFile || currentFileSize >= finalFileSize) { // Check if end of file was reached 
 						outputFile.close();
-						
+						isFileClosed = true;
+						printf("File Transfer Done\n");
 
 						//handle final data
 					}
