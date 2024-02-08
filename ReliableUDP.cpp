@@ -343,6 +343,7 @@ int main(int argc, char* argv[])
 							}
 
 							inputFile.close(); // close File
+							sendFile = false;
 						}
 						else //otherwise send file data
 						{
@@ -467,7 +468,7 @@ int main(int argc, char* argv[])
 						//	intData -= subtractEnd; //we only want to write the good data
 						//}
 						outputFile.write(charData, intData);
-						outputFile.flush();
+						//outputFile.flush();
 						if (!outputFile.good()) {
 							// Handle write error
 							printf("Error writing into file for output\n");
