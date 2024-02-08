@@ -37,8 +37,6 @@ const char kFileDataPacket = 3;
 
 
 
-const int32_t Path_Max = 260;
-
 //serialization
 int32_t serializeData(char packetType, int32_t intData, char charData[], unsigned char serializedData[]);
 int32_t serializeData64(char packetType, int64_t intData, char charData[], unsigned char serializedData[]);
@@ -54,7 +52,6 @@ string fileNameExtractor(string filePath);
 //checksum related
 void generateChecksum(const string& fileName, char checksumStr[kPayloadSize], ifstream* userFile);
 void corruptData(char data[], int32_t dataSize);
-void generateChecksum2(const string& fileName, char checksumStr[kPayloadSize]);
 
 
 

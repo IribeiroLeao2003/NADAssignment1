@@ -306,7 +306,7 @@ int main(int argc, char* argv[])
 
 							
 							fileSize = fileSizeReader(&inputFile);
-							generateChecksum(fileName, fileChecksum, &inputFile); // Generate checksum
+							generateChecksum("", fileChecksum, &inputFile); // Generate checksum
 
 
 							serializeData(kChecksumPacket, fileSize, fileChecksum, packet); // Sending checksum packet
@@ -485,7 +485,7 @@ int main(int argc, char* argv[])
 
 						char calculatedFileChecksum[kPayloadSize];
 						// Call generateChecksum
-						generateChecksum2(fileName, calculatedFileChecksum);
+						generateChecksum(fileName, calculatedFileChecksum, nullptr);
 						
 
 						// Close the file after calculation
