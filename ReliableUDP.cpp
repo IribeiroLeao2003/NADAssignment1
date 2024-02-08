@@ -314,7 +314,7 @@ int main(int argc, char* argv[])
 						}
 						else //otherwise send file data
 						{
-							printf("\n Sending file data\n");
+							//printf("\n Sending file data\n");
 							if (currentPacket < totalPackets) {
 								char buffer[kPayloadSize] = { '\0' };		// creating file buffer
 								int32_t readSize = kPayloadSize;
@@ -344,6 +344,7 @@ int main(int argc, char* argv[])
 								{
 									inputFile.close();
 									sendFile = false;
+									printf("\nFile transfer complete.\n");
 								}
 							}
 							
@@ -417,13 +418,13 @@ int main(int argc, char* argv[])
 				}
 				else if ((packetType == kFileDataPacket) && !isFileClosed)//otherwise we're reciving file data
 				{
-					printf("\nGot file data packet %d\n", intData);
+					//printf("\nGot file data packet %d\n", intData);
 
 					if (intData < kEndOfFile){
 						printf("\nno data to print\n");
 					}
 					else {
-						printf("\nthere is data to print\n");
+						//printf("\nthere is data to print\n");
 					}
 					//create file with the given name
 					if (!outputFile.is_open())
