@@ -82,11 +82,12 @@ void generateChecksum2(const string& fileName, char checksumStr[kPayloadSize]) {
 	CRC::Table<uint32_t, 32> crcTable = CRC::CRC_32().MakeTable();
 	uint32_t crc = CRC::CRC_32().initialValue;
 
+	inputFile.read(buffer.data(), buffer.size());
+	crc = CRC::Calculate(buffer.data(), inputFile.gcount(), crcTable);
 	while (inputFile.read(buffer.data(), buffer.size())) {
 		crc = CRC::Calculate(buffer.data(), inputFile.gcount(), crcTable, crc);
 	}
 
-	
 	hextoCharArray(crc, checksumStr);
 	printf("Checksum for file '%s': %s\n", filePath.c_str(), checksumStr);
 
@@ -125,12 +126,15 @@ void generateChecksum(const string& fileName, char checksumStr[kPayloadSize], if
 	
 
 	//reading up to kBufferSize in bytes
+	userFile->read(buffer.data(), buffer.size());
+	crc = CRC::Calculate(buffer.data(), userFile->gcount(), crcTable);
 	while (userFile->read(buffer.data(), kChecksumGenBufferSize)) {
 		//for each line read into the buffer, crc is updated 
 		// after the loop is finished, the final checksum value is hold inside the crc 
 		crc = CRC::Calculate(buffer.data(), userFile->gcount(), crcTable, crc); 
 	}
 	userFile->seekg(0, userFile->beg); //go back to beginning of file
+
 	hextoCharArray(crc, checksumStr); // string that should contain the final checksum string, passing the crc inside of the hextoString function 
 									
 }
