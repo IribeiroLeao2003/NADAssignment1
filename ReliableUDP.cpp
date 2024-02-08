@@ -304,6 +304,10 @@ int main(int argc, char* argv[])
 							// reopen file to reset pointer
 							inputFile.close();
 							inputFile.open(filePath, std::ifstream::binary);
+							if (!inputFile) {
+								printf("Failed to reopen file for data transmission.\n");
+								sendFile = false;
+							}
 
 							
 							while (currentPacket < totalPackets) {
@@ -453,7 +457,7 @@ int main(int argc, char* argv[])
 
 						}
 					}
-					if (intData > 0) { // If there's data to write in the output file 
+					if (intData > 0 && outputFile.good()) { // If there's data to write in the output file 
 						
 						/*currentFileSize += intData;*/
 
@@ -463,11 +467,18 @@ int main(int argc, char* argv[])
 						//	intData -= subtractEnd; //we only want to write the good data
 						//}
 						outputFile.write(charData, intData);
+						outputFile.flush();
+						if (!outputFile.good()) {
+							// Handle write error
+							printf("Error writing into file for output\n");
+						}
 						
 					}
 					else if (intData == kEndOfFile || currentFileSize >= finalFileSize) { // Check if end of file was reached 
+						outputFile.flush();
 						outputFile.close();
 						isFileClosed = true;
+						
 						printf("File Transfer Done\n");
 
 						//handle final data
