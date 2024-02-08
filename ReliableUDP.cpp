@@ -284,9 +284,11 @@ int main(int argc, char* argv[])
 
 							char fileNameChar[kFileNameSize] = { "\0" };
 							#pragma warning(disable:4996);
-							strcpy(fileNameChar, fileName.c_str());
+							strcpy(fileNameChar, fileName.c_str());							
 
 							int64_t currentTime = getTime();
+
+							printf("\nSending File: %s \n\n", fileNameChar);
 
 							serializeData64(packetType, currentTime, fileNameChar, packet); //serialize the data
 							//done our first send
@@ -356,7 +358,7 @@ int main(int argc, char* argv[])
 									}
 									inputFile.close();
 									sendFile = false;
-									printf("\nFile transfer complete.\n");
+									printf("\nFile Copy complete.\n\n");
 								}
 							}
 							
@@ -415,7 +417,7 @@ int main(int argc, char* argv[])
 
 					fileName = charData; //copy the file name over
 
-					printf("\nWriting File: %s\n", fileName.c_str()); //print our file that we're writing
+					printf("\nWriting File: %s\n\n", fileName.c_str()); //print our file that we're writing
 
 					finalFileSize = intData; //store the file size
 
@@ -469,7 +471,7 @@ int main(int argc, char* argv[])
 						outputFile.close();
 						isFileClosed = true;
 						
-						printf("\nFile Transfer Complete\n");
+						printf("\nFile Copy Complete\n");
 
 						//handle final data
 					}
@@ -489,10 +491,10 @@ int main(int argc, char* argv[])
 						receivedFilechecksum.close();
 
 						if (strcmp(receivedChecksumValue, calculatedFileChecksum) == 0) {
-							printf("\nChecksum validated.\n");
+							printf("\nChecksum validated.\n\n");
 						}
 						else {
-							printf("\nA match wasnt found, file might be corrupted\n");
+							printf("\nChecksum invalid. File is Likely Corrupt.\n\n");
 						}
 					}
 
