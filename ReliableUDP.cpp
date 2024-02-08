@@ -172,7 +172,7 @@ int main(int argc, char* argv[])
 		}
 
 		//check for file name in argv[2]
-		if (argc == 3)
+		if (argc >= 3)
 		{
 			filePath = argv[2]; //copy name to string
 			fileName = fileNameExtractor(filePath); //ensure we just have the file name
@@ -455,13 +455,6 @@ int main(int argc, char* argv[])
 					}
 					if (intData > 0 && outputFile.good()) { // If there's data to write in the output file 
 						
-						/*currentFileSize += intData;*/
-
-						//if (currentFileSize > finalFileSize)
-						//{
-						//	int32_t subtractEnd = currentFileSize - finalFileSize; //get difference of the useless data
-						//	intData -= subtractEnd; //we only want to write the good data
-						//}
 						outputFile.write(charData, intData);
 						
 						outputFile.flush();
@@ -479,6 +472,28 @@ int main(int argc, char* argv[])
 						printf("File Transfer Done\n");
 
 						//handle final data
+					}
+					// checksum comparson
+					if (isFileClosed && receivedChecksum) {
+						ifstream receivedFilechecksum(fileName, ifstream::binary);
+						if (!receivedFilechecksum) {
+							printf("Failed to open for checksum verification.\n");
+						}
+
+						char calculatedFileChecksum[kPayloadSize];
+						// Call generateChecksum
+						generateChecksum(fileName, calculatedFileChecksum, &receivedFilechecksum);
+						
+
+						// Close the file after calculation
+						receivedFilechecksum.close();
+
+						if (strcmp(receivedChecksumValue, calculatedFileChecksum) == 0) {
+							printf("A match was found.\n");
+						}
+						else {
+							printf("A match wasnt found, file might be corrupted\n");
+						}
 					}
 
 					
