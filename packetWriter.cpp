@@ -87,27 +87,6 @@ int32_t serializeData(char packetType, int32_t intData, char charData[], unsigne
 
 }
 
-/*
-* FUNCTION    : corruptData()
-* DESCRIPTION : This function takes a char* and a size_t
-			  : and corrupts it by inverting bits in a random location
-* PARAMETERS  : char* data - the data to be corrupted
-*			  : size_t dataSize - the size of that data
-*			  :
-* RETURNS     : Nothinig
-*/
-
-void corruptData(char* data, size_t dataSize) {
-	srand(time(NULL));
-
-	// choose a random position to corrupt
-	int positionToCorrupt = rand() % dataSize;
-
-	//inverting the bits
-	data[positionToCorrupt] = ~data[positionToCorrupt];
-
-}
-
 
 /*
 * FUNCTION    : serializeData64()
@@ -146,4 +125,22 @@ int32_t serializeData64(char packetType, int64_t intData, char charData[], unsig
 	}
 
 
+}
+
+
+/*
+* FUNCTION    : corruptData()
+* DESCRIPTION : This function takes the char payload and its size and replaces it
+* PARAMETERS  : char data[] - the data to be corrupted
+*			  : int32_t dataSize - the size of that data
+* RETURNS     : Nothinig
+*/
+
+void corruptData(char data[], int32_t dataSize) {
+
+	for (int iterator = 0; iterator < dataSize; iterator++) //go through the array and corrupt each character
+	{
+		data[iterator] = data[iterator] * -1; //invert the value
+		data[iterator]++; //add one to the value
+	}
 }

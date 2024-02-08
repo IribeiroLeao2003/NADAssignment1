@@ -179,10 +179,17 @@ int main(int argc, char* argv[])
 			{
 				sendFile = true; //we're sending a file
 				inputFile.open(filePath, ifstream::binary); //open file
+
+				// check for bad file transfer
+				if (argc == 4 && string(argv[3]) == "bad") {
+					badMode = true;
+				}
+
 				if (inputFile.is_open() == false)
 				{
 					printf("File could not be opened\n");
 					sendFile = false;
+					badMode = false;
 				}
 			}
 			else
@@ -191,10 +198,7 @@ int main(int argc, char* argv[])
 			}
 
 		}
-		// check for bad file transfer
-		if (argc == 4 && string(argv[3]) == "bad") {
-			badMode = true;
-		}
+
 	}
 
 	// initialize
@@ -304,9 +308,6 @@ int main(int argc, char* argv[])
 							fileSize = fileSizeReader(&inputFile);
 							generateChecksum(fileName, fileChecksum, &inputFile); // Generate checksum
 
-							if (badMode) {
-								corruptData(fileChecksum, sizeof(fileChecksum));
-							}
 
 							serializeData(kChecksumPacket, fileSize, fileChecksum, packet); // Sending checksum packet
 
@@ -342,8 +343,12 @@ int main(int argc, char* argv[])
 								inputFile.read(buffer, readSize);
 								if (!inputFile.good() && !inputFile.eof()) {
 									printf("\nError during data transmission\n");
+								}
 
-									break; // out of the while loop
+								if (badMode) //if in bad mode corrupt the data
+								{
+									corruptData(buffer, readSize); //corrupt the data that is being sent
+									badMode = false; //only do it once
 								}
 
 								// serialize the data and send the packet
@@ -352,10 +357,6 @@ int main(int argc, char* argv[])
 
 								if (doneFile)
 								{
-									if (badMode && fileSize % kPayloadSize == 0) {
-										char eofBuffer[kPayloadSize] = { 0 };
-										serializeData(kFileDataPacket, 0, eofBuffer, packet); 
-									}
 									inputFile.close();
 									sendFile = false;
 									printf("\nFile Copy complete.\n\n");

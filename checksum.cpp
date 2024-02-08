@@ -37,7 +37,7 @@ void hextoCharArray(uint32_t number, char hexaStr[kPayloadSize]) {
 void generateChecksum(const string& fileName, char checksumStr[kPayloadSize], ifstream* userFile)
 {
 	
-	vector<char> buffer(kBufferSize); // creating file buffer
+	vector<char> buffer(kChecksumGenBufferSize); // creating file buffer
 
 	// open the file to read binary 
 	if (!userFile->is_open()) {
@@ -54,7 +54,7 @@ void generateChecksum(const string& fileName, char checksumStr[kPayloadSize], if
 	
 
 	//reading up to kBufferSize in bytes
-	while (userFile->read(buffer.data(), kBufferSize)) { 
+	while (userFile->read(buffer.data(), kChecksumGenBufferSize)) {
 		//for each line read into the buffer, crc is updated 
 		// after the loop is finished, the final checksum value is hold inside the crc 
 		crc = CRC::Calculate(buffer.data(), userFile->gcount(), crcTable, crc); 
