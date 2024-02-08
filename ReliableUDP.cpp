@@ -306,7 +306,7 @@ int main(int argc, char* argv[])
 							generateChecksum(fileName, fileChecksum, &inputFile); // Generate checksum
 
 							if (badMode) {
-								// function to corrupt data here
+								corruptData(fileChecksum, sizeof(fileChecksum));
 							}
 
 							serializeData(kChecksumPacket, fileSize, fileChecksum, packet); // Sending checksum packet

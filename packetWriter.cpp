@@ -89,8 +89,8 @@ int32_t serializeData(char packetType, int32_t intData, char charData[], unsigne
 
 /*
 * FUNCTION    : corruptData()
-* DESCRIPTION : This function takes a char, int64_t, char array, and unsigned char array
-			  : and serializes the int and char array and saves it to the unsigned char array
+* DESCRIPTION : This function takes a char* and a size_t
+			  : and corrupts it by inverting bits in a random location
 * PARAMETERS  : char* data - the data to be corrupted
 *			  : size_t dataSize - the size of that data
 *			  :
