@@ -273,6 +273,7 @@ int main(int argc, char* argv[])
 					{
 						if (fileInfoSend) //we haven't sent the first chunk of data yet
 						{
+							printf("\n Sending File info\n");
 							//send our file info
 							packetType = kFileInfoPacket;
 
@@ -289,6 +290,7 @@ int main(int argc, char* argv[])
 						}
 						else if (checksumSend)//first send has been done. Now we do file data
 						{
+							printf("\n Sending checksum info\n");
 							checksumSend = false; // No longer in checksum 
 							char fileChecksum[kPayloadSize];
 
@@ -347,6 +349,7 @@ int main(int argc, char* argv[])
 						}
 						else //otherwise send file data
 						{
+							printf("\n Sending file data\n");
 							packetType = kFileDataPacket;
 							char fileBuffer[kPayloadSize] = { '\0' }; //the file data buffer						
 
@@ -371,6 +374,7 @@ int main(int argc, char* argv[])
 								sendFile = false;
 								inputFile.close();//close file
 							}
+							printf("\readsize is %d\n", dataSize);
 						}
 
 					}
@@ -411,9 +415,9 @@ int main(int argc, char* argv[])
 				int64_t timeData = 0;
 				char charData[kPayloadSize] = { '\0' };
 				//first check for file name
-				if (packet[0] != kFileInfoPacket)
+				if (packet[0] != kFileInfoPacket && packet[0] != 0)
 				{
-					deserializeData(packet, &packetType, &intData, charData);
+					deserializeData(packet, &packetType, &intData, charData);				
 				}
 				else
 				{
@@ -422,23 +426,26 @@ int main(int argc, char* argv[])
 
 				if (packetType == kFileInfoPacket) //check if we have not started receiving a file
 				{
+					printf("\nGot file info packet %d\n", intData);
 					receivedFileInfo = true; //we have now received a file
 
 					fileName = charData; //copy the file name over
 
-					printf("%s", fileName.c_str());
+					printf("File name: %s", fileName.c_str());
 
 					finalFileSize = intData; //store the file size
 
 				}
 				else if (packetType == kChecksumPacket)
 				{
+					printf("\nGot checksum packet %d\n", intData);
 					memcpy(receivedChecksumValue, charData, kPayloadSize);
 					receivedChecksumValue[kPayloadSize] = '\0';
 					receivedChecksum = true;
 				}
 				else if ((packetType == kFileDataPacket) && !isFileClosed)//otherwise we're reciving file data
 				{
+					printf("\nGot file data packet %d\n", intData);
 
 					if (intData < kEndOfFile){
 						printf("\nno data to print\n");
@@ -468,14 +475,15 @@ int main(int argc, char* argv[])
 						//	intData -= subtractEnd; //we only want to write the good data
 						//}
 						outputFile.write(charData, intData);
-						//outputFile.flush();
+						
+						outputFile.flush();
 						if (!outputFile.good()) {
 							// Handle write error
 							printf("Error writing into file for output\n");
 						}
 						
 					}
-					else if (intData == kEndOfFile || currentFileSize >= finalFileSize) { // Check if end of file was reached 
+					else if (intData != kPayloadSize || currentFileSize >= finalFileSize) { // Check if end of file was reached 
 						outputFile.flush();
 						outputFile.close();
 						isFileClosed = true;
