@@ -57,6 +57,7 @@ void corruptData(char data[], int32_t dataSize);
 
 //misc
 int64_t getTime();
+double calculateTransferSpeed(int fileSize, double seconds);
 
 //const int32_t kNotEndOfFile = -1;
 //const int32_t kTrue = 1;

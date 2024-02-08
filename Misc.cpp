@@ -45,4 +45,24 @@ int64_t getTime()
 
 	 return milliSecondsSinceEpoc.count(); //return milliseconds
 
+} 
+
+/*
+* FUNCTION    : calculateTransferSpeed()
+* DESCRIPTION : This returns the current transfer speed in mbps
+* PARAMETERS  : int fileSize
+*			  : double seconds
+* RETURNS     : double mbps which should be the transfer speed
+*/
+double calculateTransferSpeed(int fileSize, double seconds) {
+	
+	int fileSizeinBits = fileSize * 8;
+
+	
+	double bps = fileSizeinBits / seconds;
+
+	
+	double mbps = bps / 1000000;
+
+	return mbps;
 }
