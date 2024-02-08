@@ -129,7 +129,6 @@ int main(int argc, char* argv[])
 	string filePath = "";
 	ifstream inputFile;
 	int32_t fileSize = 0;
-	int32_t finalBytes = 0;
 	double totalPackets = 0;
 	int currentPacket = 0;
 	bool badMode = false;
@@ -280,7 +279,6 @@ int main(int argc, char* argv[])
 					{
 						if (fileInfoSend) //we haven't sent the first chunk of data yet
 						{
-							printf("\n Sending File info\n");
 							//send our file info
 							packetType = kFileInfoPacket;
 
@@ -297,7 +295,6 @@ int main(int argc, char* argv[])
 						}
 						else if (checksumSend)//first send has been done. Now we do file data
 						{
-							printf("\n Sending checksum info\n");
 							checksumSend = false; // No longer in checksum 
 							char fileChecksum[kPayloadSize];
 
@@ -318,7 +315,7 @@ int main(int argc, char* argv[])
 							inputFile.close();
 							inputFile.open(filePath, std::ifstream::binary);
 							if (!inputFile) {
-								printf("Failed to reopen file for data transmission.\n");
+								printf("\nFailed to reopen file for data transmission.\n");
 								sendFile = false;
 							}
 
@@ -342,7 +339,7 @@ int main(int argc, char* argv[])
 								// Read file data into buffer
 								inputFile.read(buffer, readSize);
 								if (!inputFile.good() && !inputFile.eof()) {
-									printf("Error during data transmission\n");
+									printf("\nError during data transmission\n");
 
 									break; // out of the while loop
 								}
@@ -368,7 +365,7 @@ int main(int argc, char* argv[])
 					}
 					else
 					{
-						printf("File could not be read.\n");
+						printf("\nFile could not be read.\n");
 						sendFile = false;
 					}
 
@@ -414,19 +411,17 @@ int main(int argc, char* argv[])
 
 				if (packetType == kFileInfoPacket) //check if we have not started receiving a file
 				{
-					printf("\nGot file info packet %d\n", intData);
 					receivedFileInfo = true; //we have now received a file
 
 					fileName = charData; //copy the file name over
 
-					printf("File name: %s", fileName.c_str());
+					printf("\nWriting File: %s\n", fileName.c_str()); //print our file that we're writing
 
 					finalFileSize = intData; //store the file size
 
 				}
 				else if (packetType == kChecksumPacket)
 				{
-					printf("\nGot checksum packet %d\n", intData);
 					memcpy(receivedChecksumValue, charData, kPayloadSize);
 					receivedChecksumValue[kPayloadSize] = '\0';
 					receivedChecksum = true;
@@ -449,27 +444,32 @@ int main(int argc, char* argv[])
 						if (!outputFile)
 						{
 
-							printf("File could not be opened for writing %s\n", fileName.c_str());
+							printf("\nFile could not be opened for writing %s\n", fileName.c_str());
 
 						}
 					}
-					if (intData > 0 && outputFile.good()) { // If there's data to write in the output file 
+					if (intData == kPayloadSize && outputFile.good()) { // If there's data to write in the output file 
 						
 						outputFile.write(charData, intData);
 						
 						outputFile.flush();
 						if (!outputFile.good()) {
 							// Handle write error
-							printf("Error writing into file for output\n");
+							printf("\nError writing into file for output\n");
 						}
 						
 					}
-					else if (intData != kPayloadSize || currentFileSize >= finalFileSize) { // Check if end of file was reached 
+					else if (intData < kPayloadSize || currentFileSize >= finalFileSize) { // Check if end of file was reached 
+						
+						//final write
+						outputFile.write(charData, intData);
+						outputFile.flush();
+						
 						outputFile.flush();
 						outputFile.close();
 						isFileClosed = true;
 						
-						printf("File Transfer Done\n");
+						printf("\nFile Transfer Complete\n");
 
 						//handle final data
 					}
@@ -477,7 +477,7 @@ int main(int argc, char* argv[])
 					if (isFileClosed && receivedChecksum) {
 						ifstream receivedFilechecksum(fileName, ifstream::binary);
 						if (!receivedFilechecksum) {
-							printf("Failed to open for checksum verification.\n");
+							printf("\nFailed to open for checksum verification.\n");
 						}
 
 						char calculatedFileChecksum[kPayloadSize];
@@ -489,10 +489,10 @@ int main(int argc, char* argv[])
 						receivedFilechecksum.close();
 
 						if (strcmp(receivedChecksumValue, calculatedFileChecksum) == 0) {
-							printf("A match was found.\n");
+							printf("\nChecksum validated.\n");
 						}
 						else {
-							printf("A match wasnt found, file might be corrupted\n");
+							printf("\nA match wasnt found, file might be corrupted\n");
 						}
 					}
 
