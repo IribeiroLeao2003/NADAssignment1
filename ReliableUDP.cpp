@@ -263,7 +263,7 @@ int main(int argc, char* argv[])
 			unsigned char packet[PacketSize];
 			memset(packet, 0, sizeof(packet));
 
-			if (connected == true)
+			if (connection.IsConnected() == true && mode == Client)
 			{			
 				char packetType = 0;
 
@@ -404,7 +404,7 @@ int main(int argc, char* argv[])
 			{
 				break; //don't touch this is from original code
 			}
-			else //data in packet
+			else if (mode == Server) //data in packet
 			{
 				int32_t intData = 0;
 				int64_t timeData = 0;
