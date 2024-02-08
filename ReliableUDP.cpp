@@ -125,12 +125,13 @@ int main(int argc, char* argv[])
 	bool sendFile = false;
 	bool checksumSend = false;
 	bool fileInfoSend = true;
+	bool doneFile = false;
 	string filePath = "";
 	ifstream inputFile;
 	int32_t fileSize = 0;
-	double numOfReads = 0;
-	int currentNumOfReads = 0;
 	int32_t finalBytes = 0;
+	double totalPackets = 0;
+	int currentPacket = 0;
 
 	//server vars
 	bool receivedFileInfo = false;
@@ -300,8 +301,7 @@ int main(int argc, char* argv[])
 							serializeData(kChecksumPacket, fileSize, fileChecksum, packet); // Sending checksum packet
 
 							// preparing for data transmission
-							double totalPackets = ceil(static_cast<double>(fileSize) / kPayloadSize);
-							int currentPacket = 0;
+							totalPackets = ceil(static_cast<double>(fileSize) / kPayloadSize);
 
 							// reopen file to reset pointer
 							inputFile.close();
@@ -311,8 +311,11 @@ int main(int argc, char* argv[])
 								sendFile = false;
 							}
 
-							
-							while (currentPacket < totalPackets) {
+						}
+						else //otherwise send file data
+						{
+							printf("\n Sending file data\n");
+							if (currentPacket < totalPackets) {
 								char buffer[kPayloadSize] = { '\0' };		// creating file buffer
 								int32_t readSize = kPayloadSize;
 
@@ -321,6 +324,7 @@ int main(int argc, char* argv[])
 									int lastPacketSize = fileSize % kPayloadSize;
 									if (lastPacketSize > 0) {
 										readSize = lastPacketSize;
+										doneFile = true;
 									}
 								}
 
@@ -328,53 +332,21 @@ int main(int argc, char* argv[])
 								inputFile.read(buffer, readSize);
 								if (!inputFile.good() && !inputFile.eof()) {
 									printf("Error during data transmission\n");
-									
+
 									break; // out of the while loop
 								}
 
 								// serialize the data and send the packet
 								serializeData(kFileDataPacket, readSize, buffer, packet);
 								currentPacket++;
-							}
 
+								if (doneFile)
+								{
+									inputFile.close();
+									sendFile = false;
+								}
+							}
 							
-							if (fileSize % kPayloadSize == 0) { // If remainder exists then send EOF indicator in form of packet
-								char buffer[kPayloadSize] = { 0 }; // Create an empty buffer 
-								int eofIndicatorSize = 0; // create payload to indicate EOF (can change later if needed) 
-								serializeData(kEndOfFile, eofIndicatorSize, buffer, packet); //Serializing Data
-							}
-
-							inputFile.close(); // close File
-							sendFile = false;
-						}
-						else //otherwise send file data
-						{
-							printf("\n Sending file data\n");
-							packetType = kFileDataPacket;
-							char fileBuffer[kPayloadSize] = { '\0' }; //the file data buffer						
-
-
-							currentNumOfReads++; //increment number of reads
-							int32_t dataSize = fileReader(&inputFile, fileBuffer); //read the data
-							
-							if (currentNumOfReads >= numOfReads)
-							{
-								dataSize = finalBytes; //this array will be smaller because it's our last
-							}
-
-
-							if (dataSize != kEndOfFile) //check if end of file
-							{
-								serializeData(packetType, dataSize, fileBuffer, packet); //serialize the data and send it							
-							}
-							else //end of file close it
-							{
-								char emptyBuffer[kPayloadSize] = { '\0' }; //no data to send so just send an empty array
-								serializeData(packetType, dataSize, fileBuffer, packet); //serialize the data and send it
-								sendFile = false;
-								inputFile.close();//close file
-							}
-							printf("\readsize is %d\n", dataSize);
 						}
 
 					}
