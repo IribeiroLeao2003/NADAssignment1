@@ -296,7 +296,6 @@ int main(int argc, char* argv[])
 							fileSize = fileSizeReader(&inputFile);
 							generateChecksum(fileName, fileChecksum, &inputFile); // Generate checksum
 							serializeData(kChecksumPacket, fileSize, fileChecksum, packet); // Sending checksum packet
-							connection.SendPacket(packet, sizeof(packet));
 
 							// preparing for data transmission
 							double totalPackets = ceil(static_cast<double>(fileSize) / kPayloadSize);
@@ -329,8 +328,6 @@ int main(int argc, char* argv[])
 
 								// serialize the data and send the packet
 								serializeData(kFileDataPacket, readSize, buffer, packet);
-								connection.SendPacket(packet, sizeof(packet));
-
 								currentPacket++;
 							}
 
@@ -339,7 +336,6 @@ int main(int argc, char* argv[])
 								char buffer[kPayloadSize] = { 0 }; // Create an empty buffer 
 								int eofIndicatorSize = 0; // create payload to indicate EOF (can change later if needed) 
 								serializeData(kEndOfFile, eofIndicatorSize, buffer, packet); //Serializing Data
-								connection.SendPacket(packet, sizeof(packet)); // Send EOF indicator packet
 							}
 
 							inputFile.close(); // close File
@@ -353,7 +349,7 @@ int main(int argc, char* argv[])
 							currentNumOfReads++; //increment number of reads
 							int32_t dataSize = fileReader(&inputFile, fileBuffer); //read the data
 							
-							if (currentNumOfReads > numOfReads)
+							if (currentNumOfReads >= numOfReads)
 							{
 								dataSize = finalBytes; //this array will be smaller because it's our last
 							}
@@ -439,7 +435,7 @@ int main(int argc, char* argv[])
 				else if ((packetType == kFileDataPacket) && !isFileClosed)//otherwise we're reciving file data
 				{
 
-					if (intData < kPayloadSize){
+					if (intData < kEndOfFile){
 						printf("\nno data to print\n");
 					}
 					else {
