@@ -485,13 +485,14 @@ int main(int argc, char* argv[])
 
 						char calculatedFileChecksum[kPayloadSize];
 						// Call generateChecksum
-						generateChecksum(fileName, calculatedFileChecksum, &receivedFilechecksum);
+						generateChecksum2(fileName, calculatedFileChecksum);
 						
 
 						// Close the file after calculation
 						receivedFilechecksum.close();
 
-						if (strcmp(receivedChecksumValue, calculatedFileChecksum) == 0) {
+						printf("Value after checksum2\n\n%s \t\n %s \t\n", receivedChecksumValue, calculatedFileChecksum);
+						if (memcmp(receivedChecksumValue, calculatedFileChecksum, sizeof(calculatedFileChecksum)) == 0) {
 							printf("\nChecksum validated.\n\n");
 						}
 						else {

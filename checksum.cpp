@@ -5,6 +5,9 @@
 #include <iostream>
 #include <vector>
 
+#include <limits.h>
+#include <windows.h>
+
 /*
 * FUNCTION    : hextoString()
 * DESCRIPTION : This function takes an uint32_t and turns it into a hexadecimal string. 
@@ -27,12 +30,80 @@ void hextoCharArray(uint32_t number, char hexaStr[kPayloadSize]) {
 
 
 
+
+
+
+
+/*
+* FUNCTION    : getExecutablePath()
+* DESCRIPTION : This function returns the current file path for the .exe running to make sure there are no conflicts with the checksum calculation
+* PARAMETERS  : NONE
+*			  :
+*
+* RETURNS     : "" if null (return path.substr(0, lastSlashPos) which is the current directory of the exe
+*/
+string getExecutablePath() {
+	//create buffer with MAX_PATH (variable from windows library)
+	char buffer[MAX_PATH];
+	size_t copied = GetModuleFileNameA(NULL, buffer, MAX_PATH);
+	if (copied > 0 && copied < MAX_PATH) {
+		string currentpath(buffer, copied);
+		size_t lastSlashPos = currentpath.find_last_of("\\/");
+		if (lastSlashPos != string::npos) {
+			return currentpath.substr(0, lastSlashPos); // Return the directory, excluding the executable name
+		}
+	}
+	return ""; 
+}
+
+
+/*
+* FUNCTION    : generateChecksum2()
+* DESCRIPTION : This function takes an const string containing the file name, it opens the file and generates a checksum with the help of the CRC library
+* PARAMETERS  : const string& fileName - Name of the file
+*			  : char checksumStr[kPayloadSize] - buffer to store checksum
+*			  :
+*
+* RETURNS     : simply update checksumStr with the
+*/
+void generateChecksum2(const string& fileName, char checksumStr[kPayloadSize]) {
+	string executableDir = getExecutablePath();
+	printf("\n%s\n", executableDir.c_str());
+	string filePath = executableDir + "\\" + fileName; // Construct the full file path
+	printf("\n%s\n", filePath.c_str());
+
+	ifstream inputFile(filePath, std::ifstream::binary);
+	if (!inputFile.is_open()) {
+		printf("Failed to open file for checksum");
+		return;
+	}
+
+	vector<char> buffer(kChecksumGenBufferSize);
+	CRC::Table<uint32_t, 32> crcTable = CRC::CRC_32().MakeTable();
+	uint32_t crc = CRC::CRC_32().initialValue;
+
+	while (inputFile.read(buffer.data(), buffer.size())) {
+		crc = CRC::Calculate(buffer.data(), inputFile.gcount(), crcTable, crc);
+	}
+
+	
+	hextoCharArray(crc, checksumStr);
+	printf("Checksum for file '%s': %s\n", filePath.c_str(), checksumStr);
+
+	
+	inputFile.close();
+}
+
+
+
 /*
 * FUNCTION    : generateChecksum()
 * DESCRIPTION : This function takes an const string containing the file name, it opens the file and generates a checksum with the help of the CRC library 
-* PARAMETERS  : const string& fileName - Name of the file to be open 
+* PARAMETERS  : const string& fileName - Name of the file 
+*			  : char checksumStr[kPayloadSize] - buffer to store checksum 
+*			  : ifstream* userFile - pointer to file
 *			 
-* RETURNS     : string checksumStr on success and "" on failure
+* RETURNS     : simply update checksumStr with the 
 */
 void generateChecksum(const string& fileName, char checksumStr[kPayloadSize], ifstream* userFile)
 {

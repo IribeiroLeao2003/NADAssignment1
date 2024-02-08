@@ -138,9 +138,8 @@ int32_t serializeData64(char packetType, int64_t intData, char charData[], unsig
 
 void corruptData(char data[], int32_t dataSize) {
 
-	for (int iterator = 0; iterator < dataSize; iterator++) //go through the array and corrupt each character
-	{
-		data[iterator] = data[iterator] * -1; //invert the value
-		data[iterator]++; //add one to the value
+	for (size_t i = 0; i < dataSize; ++i) {
+		// Example: XOR with a fixed pattern for visible corruption
+		data[i] ^= 0xAA; // XOR with 10101010 pattern
 	}
 }
