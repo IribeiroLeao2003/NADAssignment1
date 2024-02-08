@@ -132,6 +132,8 @@ int main(int argc, char* argv[])
 	int32_t finalBytes = 0;
 	double totalPackets = 0;
 	int currentPacket = 0;
+	bool badMode = false;
+
 
 	//server vars
 	bool receivedFileInfo = false;
@@ -189,6 +191,10 @@ int main(int argc, char* argv[])
 				printf("File name is too long.\n");
 			}
 
+		}
+		// check for bad file transfer
+		if (argc == 4 && string(argv[3]) == "bad") {
+			badMode = true;
 		}
 	}
 
@@ -298,6 +304,11 @@ int main(int argc, char* argv[])
 							
 							fileSize = fileSizeReader(&inputFile);
 							generateChecksum(fileName, fileChecksum, &inputFile); // Generate checksum
+
+							if (badMode) {
+								// function to corrupt data here
+							}
+
 							serializeData(kChecksumPacket, fileSize, fileChecksum, packet); // Sending checksum packet
 
 							// preparing for data transmission
@@ -342,6 +353,10 @@ int main(int argc, char* argv[])
 
 								if (doneFile)
 								{
+									if (badMode && fileSize % kPayloadSize == 0) {
+										char eofBuffer[kPayloadSize] = { 0 };
+										serializeData(kFileDataPacket, 0, eofBuffer, packet); 
+									}
 									inputFile.close();
 									sendFile = false;
 									printf("\nFile transfer complete.\n");

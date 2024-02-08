@@ -87,6 +87,27 @@ int32_t serializeData(char packetType, int32_t intData, char charData[], unsigne
 
 }
 
+/*
+* FUNCTION    : corruptData()
+* DESCRIPTION : This function takes a char, int64_t, char array, and unsigned char array
+			  : and serializes the int and char array and saves it to the unsigned char array
+* PARAMETERS  : char* data - the data to be corrupted
+*			  : size_t dataSize - the size of that data
+*			  :
+* RETURNS     : Nothinig
+*/
+
+void corruptData(char* data, size_t dataSize) {
+	srand(time(NULL));
+
+	// choose a random position to corrupt
+	int positionToCorrupt = rand() % dataSize;
+
+	//inverting the bits
+	data[positionToCorrupt] = ~data[positionToCorrupt];
+
+}
+
 
 /*
 * FUNCTION    : serializeData64()
