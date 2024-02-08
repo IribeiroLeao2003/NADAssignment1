@@ -473,6 +473,10 @@ int main(int argc, char* argv[])
 						isFileClosed = true;
 						
 						printf("\nFile Copy Complete\n");
+						timeData = getTime();
+						int sec = ((timeData + 500) / 1000);
+						double timeinSeconds = calculateTransferSpeed(finalFileSize, sec);
+						printf("Transfer Speed: %.2f Mbps\n", timeinSeconds);
 
 						//handle final data
 					}

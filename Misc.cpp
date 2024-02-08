@@ -56,13 +56,12 @@ int64_t getTime()
 */
 double calculateTransferSpeed(int fileSize, double seconds) {
 	
-	int fileSizeinBits = fileSize * 8;
+	int fileSizeinBits = fileSize * 8; // calculate file size in buts
+	
+	double bps = fileSizeinBits / seconds; // divide it by seconds
 
 	
-	double bps = fileSizeinBits / seconds;
-
-	
-	double mbps = bps / 1000000;
+	double mbps = bps / 1000000;			
 
 	return mbps;
 }
