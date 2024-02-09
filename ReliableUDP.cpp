@@ -138,7 +138,8 @@ int main(int argc, char* argv[])
 	bool receivedFileInfo = false;
 	bool receivedChecksum = false;
 	ofstream outputFile; // used to write into file 
-
+	int64_t startTime = 0;
+	int64_t endTime = 0;
 
 	//client and server vars
 	string fileName = "";
@@ -400,7 +401,7 @@ int main(int argc, char* argv[])
 			else if (mode == Server) //data in packet
 			{
 				int32_t intData = 0;
-				int64_t timeData = 0;
+				
 				char charData[kPayloadSize] = { '\0' };
 				//first check for file name
 				if (packet[0] != kFileInfoPacket && packet[0] != 0)
@@ -409,7 +410,7 @@ int main(int argc, char* argv[])
 				}
 				else
 				{
-					deserializeData64(packet, &packetType, &timeData, charData);
+					deserializeData64(packet, &packetType, &startTime, charData);
 				}				
 
 				if (packetType == kFileInfoPacket) //check if we have not started receiving a file
@@ -420,13 +421,12 @@ int main(int argc, char* argv[])
 
 					printf("\nWriting File: %s\n\n", fileName.c_str()); //print our file that we're writing
 
-					finalFileSize = intData; //store the file size
-
 				}
 				else if (packetType == kChecksumPacket)
 				{
 					memcpy(receivedChecksumValue, charData, kPayloadSize);
 					receivedChecksumValue[kPayloadSize] = '\0';
+					finalFileSize = intData;
 					receivedChecksum = true;
 				}
 				else if ((packetType == kFileDataPacket) && !isFileClosed)//otherwise we're reciving file data
@@ -473,8 +473,9 @@ int main(int argc, char* argv[])
 						isFileClosed = true;
 						
 						printf("\nFile Copy Complete\n");
-						timeData = getTime();
-						int sec = ((timeData + 500) / 1000);
+						endTime = getTime();
+						int64_t difference = endTime - startTime;
+						double sec = ((difference + 500) / 1000);
 						double timeinSeconds = calculateTransferSpeed(finalFileSize, sec);
 						printf("Transfer Speed: %.2f Mbps\n", timeinSeconds);
 
