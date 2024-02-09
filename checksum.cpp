@@ -1,4 +1,9 @@
-//https://github.com/d-bahr/CRCpp
+/*
+ * ALL CREDITS FOR THE CRC LIBRARY AND ITS METHODS TO DANIEL BAHR
+ *
+ * GITHUB REPOSITORY: https://github.com/d-bahr/CRCpp
+ *
+ */
 
 #include "FileTransfer.h"
 #include "CRC.h"
@@ -48,7 +53,7 @@ string getExecutablePath() {
 	size_t copied = GetModuleFileNameA(NULL, buffer, MAX_PATH);
 	if (copied > 0 && copied < MAX_PATH) {
 		string currentpath(buffer, copied);
-		size_t lastSlashPos = currentpath.find_last_of("\\/");
+		size_t lastSlashPos = currentpath.find_last_of("\\/"); // ensure we know where the last \ is located 
 		if (lastSlashPos != string::npos) {
 			return currentpath.substr(0, lastSlashPos); // Return the directory, excluding the executable name
 		}
@@ -72,16 +77,18 @@ void generateChecksum(const string& fileName, char checksumStr[kPayloadSize], if
 	ifstream inputFile;
 	//if FileName comes in empty is expected that userFile is open 
 	if (!fileName.empty()) {
-		string executableDir = getExecutablePath();
+		
+		string executableDir = getExecutablePath();			// find path to exe (where the output file name is)
 		string filePath = executableDir + "\\" + fileName; // Construct the full file path 
-		inputFile.open(filePath, ifstream::binary);
+		
+		inputFile.open(filePath, ifstream::binary);			// Open File in binary
 		if (!inputFile.is_open()) {
 			printf("Failed to open file for checksum");
 			return;
 		}
-		userFile = &inputFile;
+		userFile = &inputFile;								// give userFile the reference value of input value
 	}
-	else if (userFile == nullptr || !userFile->is_open()) {
+	else if (userFile == nullptr || !userFile->is_open()) {	// if neither of them had nothing in them means something is wrong
 		
 		printf("FileStream isnt avaliable\n");
 		return;
@@ -107,7 +114,7 @@ void generateChecksum(const string& fileName, char checksumStr[kPayloadSize], if
 	}
 	userFile->seekg(0, userFile->beg); //go back to beginning of file
 
-	if (!fileName.empty()) {
+	if (!fileName.empty()) {	// if a ifstream was created then close it 
 		inputFile.close();
 	}
 

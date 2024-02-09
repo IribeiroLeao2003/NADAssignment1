@@ -39,11 +39,17 @@ string fileNameExtractor(string filePath)
 */
 int64_t getTime()
 {
-	system_clock::time_point time = system_clock::now(); //get time
-	system_clock::duration sinceEpoc = time.time_since_epoch(); //get time since epoch
-	system_clock::duration milliSecondsSinceEpoc = duration_cast<milliseconds>(sinceEpoc); //convert to miliseconds;
-
-	 return milliSecondsSinceEpoc.count(); //return milliseconds
+	// using correct namespace
+	using namespace std::chrono;
+	
+	auto Timenow = system_clock::now();	// Get the current time 
+	
+	auto since_epoch = Timenow.time_since_epoch();	// Convert to a duration since epoch
+	
+	auto millis = duration_cast<milliseconds>(since_epoch).count();		//Convert to mileseconds
+	
+	return millis;		
+	
 
 } 
 
@@ -56,12 +62,13 @@ int64_t getTime()
 */
 double calculateTransferSpeed(int fileSize, double seconds) {
 	
-	int fileSizeinBits = fileSize * 8; // calculate file size in buts
-	
-	double bps = fileSizeinBits / seconds; // divide it by seconds
+	int fileSizeinBits = fileSize * 8;		//calculatefile size in bits
 
-	
-	double mbps = bps / 1000000;			
+
+	double bps = fileSizeinBits / seconds;	//calculate bits per seconds
+
+
+	double mbps = bps / 1000000.0;			// ensuring number accuracy using point division
 
 	return mbps;
 }

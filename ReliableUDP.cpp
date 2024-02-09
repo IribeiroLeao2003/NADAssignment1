@@ -473,16 +473,14 @@ int main(int argc, char* argv[])
 						isFileClosed = true;
 						
 						printf("\nFile Copy Complete\n");
-						endTime = getTime();
-						int64_t difference = endTime - startTime;
-						double sec = ((difference + 500) / 1000);
-						double timeinSeconds = calculateTransferSpeed(finalFileSize, sec);
-						printf("Transfer Speed: %.2f Mbps\n", timeinSeconds);
+						
+						
 
 						//handle final data
 					}
 					// checksum comparson
 					if (isFileClosed && receivedChecksum) {
+						
 						ifstream receivedFilechecksum(fileName, ifstream::binary);
 						if (!receivedFilechecksum) {
 							printf("\nFailed to open for checksum verification.\n");
@@ -503,6 +501,11 @@ int main(int argc, char* argv[])
 						else {
 							printf("\nChecksum invalid. File is Likely Corrupt.\n\n");
 						}
+						endTime = getTime();
+						int64_t durationMs = endTime - startTime; // Duration in milliseconds
+						double durationSec = durationMs / 1000.0;
+						double transferSpeed = calculateTransferSpeed(finalFileSize, durationSec);
+						printf("Final of Transfer Speed: %.4f Mbps\n", transferSpeed);
 					}
 
 					
@@ -562,4 +565,5 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+
 
