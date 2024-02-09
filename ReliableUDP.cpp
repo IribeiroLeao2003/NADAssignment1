@@ -493,19 +493,20 @@ int main(int argc, char* argv[])
 
 						// Close the file after calculation
 						receivedFilechecksum.close();
+						endTime = getTime();
 
-						printf("Value after checksum2\n\n%s \t\n %s \t\n", receivedChecksumValue, calculatedFileChecksum);
+						printf("Original File Checksum: %s \t\nSaved File Checksum: %s \t\n", receivedChecksumValue, calculatedFileChecksum);
 						if (memcmp(receivedChecksumValue, calculatedFileChecksum, sizeof(calculatedFileChecksum)) == 0) {
 							printf("\nChecksum validated.\n\n");
 						}
 						else {
 							printf("\nChecksum invalid. File is Likely Corrupt.\n\n");
 						}
-						endTime = getTime();
+						
 						int64_t durationMs = endTime - startTime; // Duration in milliseconds
 						double durationSec = durationMs / 1000.0;
 						double transferSpeed = calculateTransferSpeed(finalFileSize, durationSec);
-						printf("Final of Transfer Speed: %.4f Mbps\n", transferSpeed);
+						printf("File Transfered in: %.4f Seconds \nAt a Speed of: %.4f Mbps\n\n", durationSec, transferSpeed);
 					}
 
 					
